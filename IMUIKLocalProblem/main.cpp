@@ -29,6 +29,8 @@
 #include <OpenSim/Simulation/Model/Model.h>
 #include <OpenSim/Tools/IMUInverseKinematicsTool.h>
 
+#include <string>
+#include <iostream>
 #include <clocale>
 
 using namespace OpenSim;
@@ -37,18 +39,16 @@ using namespace std;
 int main()
 {
     // Make a "deep copy" of current locale name.
-    std::string prev_loc = std::setlocale(LC_ALL, nullptr);
+    // std::string prev_loc = std::setlocale(LC_ALL, nullptr);
 
     // Germany = de_DE.UTF-8
     std::string locale = "fi_FI.UTF-8";
  
     // The C locale will be UTF-8 enabled Finnish with decimal dot being a comma
-    if (const char* loc = std::setlocale(LC_ALL, locale.c_str())) 
-        std::wprintf(L"New LC_ALL locale: %s\n", loc);
+    if (const char* loc = std::setlocale(LC_ALL, locale.c_str()))
+        printf("New LC_ALL locale: %s\n", loc);
  
-    std::wprintf(L"Number Format: %.2f\n", 3.14);
- 
-
+    printf("Number Format: %.2f\n", 3.14);
     // Calibrate model and compare result to standard
     IMUPlacer imuPlacer("imuPlacer.xml");
     imuPlacer.run();
@@ -72,24 +72,25 @@ int main()
     ik_hjc_nf.set_results_directory("ik_hjc_nf_" + facingX.getName());
     ik_hjc_nf.run(false);
 
-    // Now facing the opposite direction (negative X)
-    IMUPlacer placerNegX("imuPlacerFaceNegX.xml");
-    placerNegX.run(false);
-    Model facingNegX = placerNegX.getCalibratedModel();
-    facingNegX.setName("calibrated_FacingNegX");
-    facingNegX.finalizeFromProperties();
+    // // Now facing the opposite direction (negative X)
+    // IMUPlacer placerNegX("imuPlacerFaceNegX.xml");
+    // placerNegX.run(false);
+    // Model facingNegX = placerNegX.getCalibratedModel();
+    // facingNegX.setName("calibrated_FacingNegX");
+    // facingNegX.finalizeFromProperties();
 
-    ik_hjc.setModel(facingNegX);
-    ik_hjc.set_results_directory("ik_hjc_" + facingNegX.getName());
-    ik_hjc.run(false);
+    // ik_hjc.setModel(facingNegX);
+    // ik_hjc.set_results_directory("ik_hjc_" + facingNegX.getName());
+    // ik_hjc.run(false);
 
-    Storage ik_X("ik_hjc_" + facingX.getName() +
-        "/ik_MT_012005D6_009-quaternions_RHJCSwinger.mot");
+    // Storage ik_X("ik_hjc_" + facingX.getName() +
+    //     "/ik_MT_012005D6_009-quaternions_RHJCSwinger.mot");
 
-    Storage ik_negX("ik_hjc_" + facingNegX.getName() +
-        "/ik_MT_012005D6_009-quaternions_RHJCSwinger.mot");
+    // Storage ik_negX("ik_hjc_" + facingNegX.getName() +
+    //     "/ik_MT_012005D6_009-quaternions_RHJCSwinger.mot");
 
-    int nc = ik_X.getColumnLabels().size();
+    // int nc = ik_X.getColumnLabels().size();
 
+    std::cout << "Finished!" << std::endl;
     return 0;
 }

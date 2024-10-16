@@ -1,6 +1,8 @@
+cmake_minimum_required(VERSION 3.4)
+
 project(Opensim_Examples)
 
-cmake_minimum_required(VERSION 3.2)
+
 
 # Settings.
 # ---------
