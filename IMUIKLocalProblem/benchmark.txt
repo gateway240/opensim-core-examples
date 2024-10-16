@@ -1,0 +1,11 @@
+fast_float
+---
+Runtime = 153526094[µs] = 153 seconds
+
+istringstream
+---
+Runtime = 156114023[µs] = 156 seconds
+
+std::stod
+---
+Runtime = 159572281[µs] = 159 seconds

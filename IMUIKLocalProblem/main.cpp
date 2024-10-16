@@ -32,12 +32,16 @@
 #include <string>
 #include <iostream>
 #include <clocale>
+#include <chrono> // for std::chrono functions
+
 
 using namespace OpenSim;
 using namespace std;
 
 int main()
 {
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
     // Make a "deep copy" of current locale name.
     // std::string prev_loc = std::setlocale(LC_ALL, nullptr);
 
@@ -67,10 +71,10 @@ int main()
     ik_hjc.set_results_directory("ik_hjc_" + facingX.getName());
     ik_hjc.run(false);
 
-    IMUInverseKinematicsTool ik_hjc_nf("setup_IMUInverseKinematics_HJC_trial_nofeet.xml");
-    ik_hjc_nf.setModel(facingX);
-    ik_hjc_nf.set_results_directory("ik_hjc_nf_" + facingX.getName());
-    ik_hjc_nf.run(false);
+    // IMUInverseKinematicsTool ik_hjc_nf("setup_IMUInverseKinematics_HJC_trial_nofeet.xml");
+    // ik_hjc_nf.setModel(facingX);
+    // ik_hjc_nf.set_results_directory("ik_hjc_nf_" + facingX.getName());
+    // ik_hjc_nf.run(false);
 
     // // Now facing the opposite direction (negative X)
     // IMUPlacer placerNegX("imuPlacerFaceNegX.xml");
@@ -90,7 +94,8 @@ int main()
     //     "/ik_MT_012005D6_009-quaternions_RHJCSwinger.mot");
 
     // int nc = ik_X.getColumnLabels().size();
-
-    std::cout << "Finished!" << std::endl;
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    std::cout << "Runtime = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
+    std::cout << "Finished Running without Error!" << std::endl;
     return 0;
 }
