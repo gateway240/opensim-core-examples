@@ -9,3 +9,11 @@ Runtime = 156114023[µs] = 156 seconds
 std::stod
 ---
 Runtime = 159572281[µs] = 159 seconds
+
+fast_float (correct version)
+---
+Runtime = 77282586[µs] = 77 seconds
+
+istringstream
+---
+Runtime = 76880095[µs] = 76 seconds

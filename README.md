@@ -1,5 +1,17 @@
 # opensim-core-examples
 
+## Examples
+
+## IMUXsense
+
+1. Uses data from the [Kuopio Gait Dataset](https://zenodo.org/records/10559504)
+2. Download [MTI Manager](https://www.movella.com/support/software-documentation) and install. Use the extra steps for [Linux](https://base.movella.com/s/article/MT-Manager-Installation-Guide-for-ubuntu-20-04-and-22-04?language=en_US) if needed.
+3. Load an `.mtb` file representing a trial into MTI manager.
+4. Export from MTI Manager using the following settings ![MTI Manager Export Dialog](static/mti-manager-export.png "MTI Manager Export Dialog")
+
+
+> NOTE: Data collected at 100 Hz
+
 ## Minimal Bug Reproduction
 
 ### Triangle Inequality
