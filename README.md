@@ -44,3 +44,10 @@ cmake -B build .
 cd build
 make
 ```
+
+### Code Reference
+
+```cpp
+// How to get a body from a model
+const OpenSim::Body& body = model.getBodySet().get("pelvis");
+```
