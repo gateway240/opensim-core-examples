@@ -23,7 +23,7 @@
 
 
 // INCLUDES
-#include <OpenSim/Simulation/Model/Model.h>
+// #include <OpenSim/Simulation/Model/Model.h>
 
 #include <OpenSim/Common/STOFileAdapter.h>
 #include <OpenSim/Tools/AnalyzeTool.h>
