@@ -1,12 +1,10 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.25)
 
 project(Opensim_Examples)
 
-
-
 # Settings.
 # ---------
-set(TARGET main CACHE TYPE STRING)
+set(TARGET "main" CACHE STRING "main")
 
 # OpenSim uses C++11 language features.
 set(CMAKE_CXX_STANDARD 17)
