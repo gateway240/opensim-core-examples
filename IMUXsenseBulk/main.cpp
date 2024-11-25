@@ -106,7 +106,7 @@ void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
             firstParent.parent_path(); // Second parent
 
         std::filesystem::path baseDir =
-            resultPath / firstParent.filename() / secondParent.filename() / "";
+            resultPath / secondParent.filename() / firstParent.filename() / "";
 
         threads.emplace_back(process, baseDir, textFilePath.stem());
       }
