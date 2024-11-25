@@ -36,7 +36,7 @@
 
 namespace fs = std::filesystem;
 
-void processC3DFile(std::string filename) {
+void processC3DFile(const fs::path &filename, const fs::path &resultPath) {
   std::cout << "---Starting Processing: " << filename << std::endl;
   try {
     OpenSim::C3DFileAdapter c3dFileAdapter{};
@@ -49,12 +49,24 @@ void processC3DFile(std::string filename) {
     std::shared_ptr<OpenSim::TimeSeriesTable> analog_table =
         c3dFileAdapter.getAnalogDataTable(tables);
 
-    size_t ext = filename.rfind(".");
-    std::string base = filename.substr(0, ext);
+    // Get the last two parent directories
+    std::filesystem::path firstParent = filename.parent_path(); // First parent
+    std::filesystem::path secondParent = firstParent.parent_path(); // Second parent
 
-    const std::string marker_file = base + "_markers.trc";
-    const std::string forces_file = base + "_grfs.sto";
-    const std::string analogs_file = base + "_analog.sto";
+    std::filesystem::path baseDir = resultPath / secondParent.filename() / firstParent.filename() / "";
+
+    // Create directories if they don't exist
+    try {
+        if (std::filesystem::create_directories(baseDir)) {
+            std::cout << "Directories created: " << baseDir << std::endl;
+        }
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Error creating directories: " << e.what() << std::endl;
+    }
+
+    const std::string marker_file = baseDir.string() + filename.stem().string() + "_markers.trc";
+    const std::string forces_file = baseDir.string() + filename.stem().string() + "_grfs.sto";
+    const std::string analogs_file = baseDir.string() + filename.stem().string() + "_analog.sto";
 
     // Write marker locations
     marker_table->updTableMetaData().setValueForKey("Units", std::string{"mm"});
@@ -74,21 +86,19 @@ void processC3DFile(std::string filename) {
   std::cout << "---Ending Processing: " << filename << std::endl;
 }
 
-void processDirectory(const fs::path &dirPath) {
+void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
   std::vector<std::thread> threads;
   // Iterate through the directory
   for (const auto &entry : fs::directory_iterator(dirPath)) {
     if (entry.is_directory()) {
       // Recursively process subdirectory
-      processDirectory(entry.path());
+      processDirectory(entry.path(), resultPath);
     } else if (entry.is_regular_file()) {
       // Check if the file has a .c3d extension
       if (entry.path().extension() == ".c3d") {
         // Create a corresponding text file
         fs::path textFilePath = entry.path();
-        // Convert fs::path to std::string
-        std::string pathString = textFilePath.string();
-        threads.emplace_back(processC3DFile, pathString);
+        threads.emplace_back(processC3DFile, textFilePath, resultPath);
       }
     }
   }
@@ -110,18 +120,17 @@ int main(int argc, char *argv[]) {
 
   fs::path directoryPath = argv[1];
 
-  if (!fs::exists(directoryPath) || !fs::is_directory(directoryPath)) {
-    std::cerr << "The provided path is not a valid directory." << std::endl;
-    return 1;
-  }
+  // Get the path to the temporary directory
+  std::filesystem::path tempDir = std::filesystem::temp_directory_path() / "kuopio-gait-dataset";
 
-  processDirectory(directoryPath);
+  processDirectory(directoryPath, tempDir);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Runtime = "
             << std::chrono::duration_cast<std::chrono::microseconds>(end -
                                                                      begin)
                    .count()
             << "[µs]" << std::endl;
+  std::cout << "Results Saved to Temporary directory: " << tempDir << std::endl;
   std::cout << "Finished Running without Error!" << std::endl;
   return 0;
 }
