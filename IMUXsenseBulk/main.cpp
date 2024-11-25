@@ -47,7 +47,7 @@ const std::vector<OpenSim::ExperimentalSensor> experimentalSensors = {
     OpenSim::ExperimentalSensor("_00B42D53", "tibia_l_imu"),
     OpenSim::ExperimentalSensor("_00B42D4D", "femur_l_imu"),
     OpenSim::ExperimentalSensor("_00B42D48", "calcn_r_imu"),
-    // OpenSim::ExperimentalSensor("_00B42D4E", "calcn_l_imu"), // Note subject 1 and 2 have this IMU
+    // OpenSim::ExperimentalSensor("_00B42D4E", "calcn_l_imu") // Note subject 1 and 2 have this IMU
     OpenSim::ExperimentalSensor("_00B42D51", "calcn_l_imu")
     };
 
