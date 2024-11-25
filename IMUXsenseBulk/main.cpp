@@ -47,49 +47,68 @@ const std::vector<OpenSim::ExperimentalSensor> experimentalSensors = {
     OpenSim::ExperimentalSensor("_00B42D53", "tibia_l_imu"),
     OpenSim::ExperimentalSensor("_00B42D4D", "femur_l_imu"),
     OpenSim::ExperimentalSensor("_00B42D48", "calcn_r_imu"),
-    OpenSim::ExperimentalSensor("_00B42D4E", "calcn_l_imu")};
+    // OpenSim::ExperimentalSensor("_00B42D4E", "calcn_l_imu"), // Note subject 1 and 2 have this IMU
+    OpenSim::ExperimentalSensor("_00B42D51", "calcn_l_imu")
+    };
 
-void process(const fs::path &file) {
+void process(const fs::path &file,
+             const std::string &trial_prefix) {
   std::cout << "---Starting Processing: " << file << std::endl;
   try {
     // Xsense Reader Settings
     OpenSim::XsensDataReaderSettings settings =
         OpenSim::XsensDataReaderSettings();
     settings.set_ExperimentalSensors(experimentalSensors);
-    settings.set_data_folder(file.parent_path());
-    settings.set_trial_prefix(file.stem());
+    settings.set_data_folder(file);
+    settings.set_trial_prefix(trial_prefix);
     OpenSim::XsensDataReader reader(settings);
 
-    std::string folder = settings.get_data_folder() + "/";
+    std::string folder = settings.get_data_folder();
+    std::cout << "Reading folder: " << folder
+              << " Reading trial prefix: " << trial_prefix << std::endl;
     OpenSim::DataAdapter::OutputTables tables = reader.read(folder);
 
     // Orientations
     const OpenSim::TimeSeriesTableQuaternion &quatTableTyped =
         reader.getOrientationsTable(tables);
-    const std::string orientationsOutputPath = folder + settings.get_trial_prefix() + "_orientations.sto";
-    OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(quatTableTyped, orientationsOutputPath);
+    const std::string orientationsOutputPath =
+        file.string() + settings.get_trial_prefix() + "_orientations.sto";
+    OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(quatTableTyped,
+                                                       orientationsOutputPath);
     std::cout << "\tWrote'" << orientationsOutputPath << std::endl;
-   
+
+  } catch (const std::exception &e) {
+    // Catching standard exceptions
+    std::cerr << "Error in processing File: " << e.what() << std::endl;
   } catch (...) {
     std::cout << "Error in processing File: " << file << std::endl;
   }
   std::cout << "---Ending Processing: " << file << std::endl;
 }
 
-void processDirectory(const fs::path &dirPath) {
+void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
 
   std::vector<std::thread> threads;
   // Iterate through the directory
   for (const auto &entry : fs::directory_iterator(dirPath)) {
     if (entry.is_directory()) {
       // Recursively process subdirectory
-      processDirectory(entry.path());
+      processDirectory(entry.path(), resultPath);
     } else if (entry.is_regular_file()) {
       // Check if the file has a .mat extension
       if (entry.path().extension() == ".mat") {
         // Create a corresponding text file
         fs::path textFilePath = entry.path();
-        threads.emplace_back(process, textFilePath);
+        // Get the last two parent directories
+        std::filesystem::path firstParent =
+            textFilePath.parent_path(); // First parent
+        std::filesystem::path secondParent =
+            firstParent.parent_path(); // Second parent
+
+        std::filesystem::path baseDir =
+            resultPath / firstParent.filename() / secondParent.filename() / "";
+
+        threads.emplace_back(process, baseDir, textFilePath.stem());
       }
     }
   }
@@ -110,13 +129,16 @@ int main(int argc, char *argv[]) {
   }
 
   fs::path directoryPath = argv[1];
-
   if (!fs::exists(directoryPath) || !fs::is_directory(directoryPath)) {
     std::cerr << "The provided path is not a valid directory." << std::endl;
     return 1;
   }
 
-  processDirectory(directoryPath);
+  // Get the path to the temporary directory
+  std::filesystem::path tempDir =
+      std::filesystem::temp_directory_path() / "kuopio-gait-dataset";
+
+  processDirectory(directoryPath, tempDir);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Runtime = "
             << std::chrono::duration_cast<std::chrono::microseconds>(end -

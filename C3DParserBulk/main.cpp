@@ -119,6 +119,10 @@ int main(int argc, char *argv[]) {
   }
 
   fs::path directoryPath = argv[1];
+  if (!fs::exists(directoryPath) || !fs::is_directory(directoryPath)) {
+    std::cerr << "The provided path is not a valid directory." << std::endl;
+    return 1;
+  }
 
   // Get the path to the temporary directory
   std::filesystem::path tempDir = std::filesystem::temp_directory_path() / "kuopio-gait-dataset";
