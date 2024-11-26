@@ -16,9 +16,9 @@ int main()
     // 40 FPS Sampling Rate
     const double rate = 1.0/40.0;
     // Last value expected in sampled array
-    const double last_num = 2510.175;
+    const double last_num = 2510.65;
 
-    const double offset = 10.2;
+    const double offset = 10.675;
     // // 40 FPS Sampling Rate
     // const double rate = 1.0/40.0;
     // // Last value expected in sampled array
@@ -61,7 +61,7 @@ int main()
 
     // Print the decimal values to 8 decimal places
     for (int i = startVal; i < numEl; ++i) {
-        std::cout << std::fixed << std::setprecision(32) <<"Multiply: " << decimalValues[i] << " Add: " << decimalValues2[i] << " FMA: " << decimalValues3[i] << std::endl;
+        std::cout << std::fixed << std::setprecision(32) << "Add: " << decimalValues2[i]  << " Multiply: " << decimalValues[i] << " FMA: " << decimalValues3[i] << std::endl;
     }
 
     const double err1 = std::abs(last_num - decimalValues[numEl - 1]);
@@ -69,7 +69,7 @@ int main()
     const double err3 = std::abs(last_num - decimalValues3[numEl - 1]);
 
     std::cout << "\nError of last value: " << std::endl;
-    std::cout << std::fixed << std::setprecision(32) << "Multiplication: " << err1 << " Addition: " << err2 << " FMA: " << err3 <<std::endl;
+    std::cout << std::fixed << std::setprecision(32) << "Add: " << err2 << " Multiply: " << err1 << " FMA: " << err3 << std::endl;
    
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
     std::cout << "Runtime = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;

@@ -8,7 +8,8 @@ set(TARGET "main" CACHE STRING "main")
 # OpenSim uses C++11 language features.
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
+# This is disabled to show that the multiplication option introduces error if not optimized by the compiler
+# SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
 
 # Find and hook up to OpenSim.
 # ----------------------------
