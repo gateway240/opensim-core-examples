@@ -38,6 +38,11 @@ int main() {
       reader.getMagneticHeadingTable(tables);
   OpenSim::STOFileAdapterVec3::write(magTableTyped, folder + readerSettings.get_trial_prefix() +
                                                "_magnetometers.sto");
+  // Accelerometer 
+  const OpenSim::TimeSeriesTableVec3 &accelTableTyped =
+            reader.getLinearAccelerationsTable(tables);
+  OpenSim::STOFileAdapterVec3::write(accelTableTyped, folder + readerSettings.get_trial_prefix() +
+                                               "_accelerations.sto");
   // Gyro
   const OpenSim::TimeSeriesTableVec3 &gyroTableTyped =
       reader.getAngularVelocityTable(tables);

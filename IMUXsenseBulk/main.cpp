@@ -47,8 +47,9 @@ const std::vector<OpenSim::ExperimentalSensor> expSens1and2 = {
     OpenSim::ExperimentalSensor("_00B42D53", "tibia_l_imu"),
     OpenSim::ExperimentalSensor("_00B42D4D", "femur_l_imu"),
     OpenSim::ExperimentalSensor("_00B42D48", "calcn_r_imu"),
-    OpenSim::ExperimentalSensor("_00B42D4E", "calcn_l_imu") // Note subject 1 and 2 have this IMU
-    };
+    OpenSim::ExperimentalSensor(
+        "_00B42D4E", "calcn_l_imu") // Note subject 1 and 2 have this IMU
+};
 
 const std::vector<OpenSim::ExperimentalSensor> expSensRemaining = {
     OpenSim::ExperimentalSensor("_00B42DA3", "pelvis_imu"),
@@ -57,12 +58,11 @@ const std::vector<OpenSim::ExperimentalSensor> expSensRemaining = {
     OpenSim::ExperimentalSensor("_00B42D53", "tibia_l_imu"),
     OpenSim::ExperimentalSensor("_00B42D4D", "femur_l_imu"),
     OpenSim::ExperimentalSensor("_00B42D48", "calcn_r_imu"),
-    OpenSim::ExperimentalSensor("_00B42D51", "calcn_l_imu")
-  };
+    OpenSim::ExperimentalSensor("_00B42D51", "calcn_l_imu")};
 
-void process(const fs::path &file,
-             const std::string &trial_prefix,
-             const std::vector<OpenSim::ExperimentalSensor> &experimentalSensors) {
+void process(
+    const fs::path &file, const std::string &trial_prefix,
+    const std::vector<OpenSim::ExperimentalSensor> &experimentalSensors) {
   std::cout << "---Starting Processing: " << file << std::endl;
   try {
     // Xsense Reader Settings
@@ -78,14 +78,22 @@ void process(const fs::path &file,
               << " Reading trial prefix: " << trial_prefix << std::endl;
     OpenSim::DataAdapter::OutputTables tables = reader.read(folder);
 
+    const std::string base_filename = file.string() + settings.get_trial_prefix();
     // Orientations
     const OpenSim::TimeSeriesTableQuaternion &quatTableTyped =
         reader.getOrientationsTable(tables);
-    const std::string orientationsOutputPath =
-        file.string() + settings.get_trial_prefix() + "_orientations.sto";
+    const std::string orientationsOutputPath = base_filename + "_orientations.sto";
     OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(quatTableTyped,
                                                        orientationsOutputPath);
+
     std::cout << "\tWrote'" << orientationsOutputPath << std::endl;
+
+    // Accelerometer
+    const OpenSim::TimeSeriesTableVec3 &accelTableTyped =
+        reader.getLinearAccelerationsTable(tables);
+    const std::string accelerationsOutputPath = base_filename + "_accelerations.sto";
+    OpenSim::STOFileAdapterVec3::write(accelTableTyped,accelerationsOutputPath);
+    std::cout << "\tWrote'" << accelerationsOutputPath << std::endl;
 
   } catch (const std::exception &e) {
     // Catching standard exceptions
@@ -110,17 +118,18 @@ void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
         // Create a corresponding text file
         fs::path textFilePath = entry.path();
         // Get the last two parent directories
-        const std::filesystem::path firstParent =
-            textFilePath.parent_path();
-        const std::filesystem::path secondParent =
-            firstParent.parent_path();
+        const std::filesystem::path firstParent = textFilePath.parent_path();
+        const std::filesystem::path secondParent = firstParent.parent_path();
 
         std::filesystem::path baseDir =
             resultPath / secondParent.filename() / firstParent.filename() / "";
 
-        // Per Kuopio Gait Dataset specs subjects 1 and 2 have different foot IMU
-        bool subject1or2 = secondParent.filename() == "01" || secondParent.filename() == "02";
-        threads.emplace_back(process, baseDir, textFilePath.stem(), subject1or2 ? expSens1and2 : expSensRemaining);
+        // Per Kuopio Gait Dataset specs subjects 1 and 2 have different foot
+        // IMU
+        bool subject1or2 =
+            secondParent.filename() == "01" || secondParent.filename() == "02";
+        threads.emplace_back(process, baseDir, textFilePath.stem(),
+                             subject1or2 ? expSens1and2 : expSensRemaining);
       }
     }
   }
@@ -135,8 +144,9 @@ void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
 int main(int argc, char *argv[]) {
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
-    if (argc < 3) {
-    std::cerr << "Usage: " << argv[0] << " <directory_path> <output_path>" << std::endl;
+  if (argc < 3) {
+    std::cerr << "Usage: " << argv[0] << " <directory_path> <output_path>"
+              << std::endl;
     return 1;
   }
 
