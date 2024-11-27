@@ -48,6 +48,16 @@ std::pair<bool, double> isUniform(const std::vector<T> &x) {
 }
 
 template <typename T>
+std::vector<T> createVectorLinspace(
+        int length, T start, T end) {
+    std::vector<T> v(length);
+    for (int i = 0; i < length; ++i) {
+        v[i] = start + i * (end - start) / (length - 1);
+    }
+    return v;
+}
+
+template <typename T>
 std::vector<T> uniformTimeSamples(const T offset, const T step_size,
                                   const int numEl) {
   std::vector<int> ivec(numEl);
@@ -98,7 +108,9 @@ int main() {
     decimalValues3[i] = std::fma(integers[i], rate, offset);
   }
 
-  std::vector<double> decimalValues4 = uniformTimeSamples(offset, rate, numEl);
+  // std::vector<double> decimalValues4 = uniformTimeSamples(offset, rate, numEl);
+
+  std::vector<double> decimalValues4 = createVectorLinspace(numEl,offset,last_num);
 
   for (int i = startVal; i < numEl; ++i) {
     std::cout << std::fixed << std::setprecision(32)
@@ -118,8 +130,12 @@ int main() {
   std::cout << "Addition Uniformly Spaced: " << tf1 << " Step: " << step1
             << std::endl;
 
-  auto [tf2, step2] = isUniform(decimalValues4);
+  auto [tf2, step2] = isUniform(decimalValues3);
   std::cout << "FMA Uniformly Spaced: " << tf2 << " Step: " << step2
+            << std::endl;
+
+  auto [tf4, step4] = isUniform(decimalValues4);
+  std::cout << "FMA Uniformly Spaced: " << tf4 << " Step: " << step4
             << std::endl;
 
   const double err1 = std::abs(last_num - decimalValues[numEl - 1]);

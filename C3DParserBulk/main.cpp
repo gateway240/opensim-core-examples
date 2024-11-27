@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
                                                                      begin)
                    .count()
             << "[µs]" << std::endl;
-  std::cout << "Results Saved to Temporary directory: " << outputPath << std::endl;
+  std::cout << "Results Saved to directory: " << outputPath << std::endl;
   std::cout << "Finished Running without Error!" << std::endl;
   return 0;
 }
