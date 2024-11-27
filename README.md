@@ -51,3 +51,9 @@ make
 // How to get a body from a model
 const OpenSim::Body& body = model.getBodySet().get("pelvis");
 ```
+
+### Running Bulk scripts
+
+```sh
+./main ~/Downloads/kuopio-gait-dataset ~/data/kuopio-gait-dataset
+```
