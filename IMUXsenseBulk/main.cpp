@@ -123,8 +123,8 @@ void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
 int main(int argc, char *argv[]) {
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
-  if (argc < 2) {
-    std::cerr << "Usage: " << argv[0] << " <directory_path>" << std::endl;
+    if (argc < 3) {
+    std::cerr << "Usage: " << argv[0] << " <directory_path> <output_path>" << std::endl;
     return 1;
   }
 
@@ -134,11 +134,9 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  // Get the path to the temporary directory
-  std::filesystem::path tempDir =
-      std::filesystem::temp_directory_path() / "kuopio-gait-dataset";
+  fs::path outputPath = argv[2];
 
-  processDirectory(directoryPath, tempDir);
+  processDirectory(directoryPath, outputPath);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Runtime = "
             << std::chrono::duration_cast<std::chrono::microseconds>(end -
