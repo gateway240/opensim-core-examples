@@ -39,7 +39,5 @@ int main()
     IMUPlacer imuPlacer_rot("calibrate_rotated.xml");
     imuPlacer_rot.run();
     Model model_rotated = imuPlacer_rot.getCalibratedModel();
-    // This has been validated visually
-    Model std_model_rotated{"std_calibrated_pelvis_rot.osim"};
     return 0;
 }
