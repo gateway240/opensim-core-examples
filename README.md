@@ -56,4 +56,5 @@ const OpenSim::Body& body = model.getBodySet().get("pelvis");
 
 ```sh
 ./main ~/Downloads/kuopio-gait-dataset ~/data/kuopio-gait-dataset
+7z a -mmt=on ~/data/kuopio-gait-dataset-processed-v2.zip ~/data/kuopio-gait-dataset/*
 ```
