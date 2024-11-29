@@ -26,33 +26,44 @@
 #include <OpenSim/OpenSim.h>
 
 int main() {
-  std::string settingsFile{"myIMUMappings.xml"};
-  OpenSim::XsensDataReaderSettings readerSettings(settingsFile);
-  OpenSim::XsensDataReader reader(readerSettings);
-  std::string folder = readerSettings.get_data_folder() + "/";
-  OpenSim::DataAdapter::OutputTables tables = reader.read(folder);
+  const std::vector<std::pair<std::string, std::string>> settings_files = {
+      {"myIMUMappings.xml", "_all"},
+      {"myIMUMappings_pelvis_calcn.xml", "_pelvis_calcn"},
+      {"myIMUMappings_pelvis_calcn_tibia.xml", "_pelvis_calcn_tibia"}};
+  for (const auto &p : settings_files) {
+    std::string settingsFile{p.first};
+    OpenSim::XsensDataReaderSettings readerSettings(settingsFile);
+    OpenSim::XsensDataReader reader(readerSettings);
+    std::string folder = readerSettings.get_data_folder() + "/";
+    OpenSim::DataAdapter::OutputTables tables = reader.read(folder);
 
+    const std::string &imu_desc = p.second;
+    // Magnetometer
+    const OpenSim::TimeSeriesTableVec3 &magTableTyped =
+        reader.getMagneticHeadingTable(tables);
+    OpenSim::STOFileAdapterVec3::write(
+        magTableTyped,
+        folder + readerSettings.get_trial_prefix() + imu_desc + "_magnetometers.sto");
+    // Accelerometer
+    const OpenSim::TimeSeriesTableVec3 &accelTableTyped =
+        reader.getLinearAccelerationsTable(tables);
+    OpenSim::STOFileAdapterVec3::write(
+        accelTableTyped,
+        folder + readerSettings.get_trial_prefix() + imu_desc + "_accelerations.sto");
+    // Gyro
+    const OpenSim::TimeSeriesTableVec3 &gyroTableTyped =
+        reader.getAngularVelocityTable(tables);
+    OpenSim::STOFileAdapterVec3::write(
+        gyroTableTyped,
+        folder + readerSettings.get_trial_prefix() + imu_desc + "_gyros.sto");
+    // Orientations
+    const OpenSim::TimeSeriesTableQuaternion &quatTableTyped =
+        reader.getOrientationsTable(tables);
 
-  // Magnetometer
-  const OpenSim::TimeSeriesTableVec3 &magTableTyped =
-      reader.getMagneticHeadingTable(tables);
-  OpenSim::STOFileAdapterVec3::write(magTableTyped, folder + readerSettings.get_trial_prefix() +
-                                               "_magnetometers.sto");
-  // Accelerometer 
-  const OpenSim::TimeSeriesTableVec3 &accelTableTyped =
-            reader.getLinearAccelerationsTable(tables);
-  OpenSim::STOFileAdapterVec3::write(accelTableTyped, folder + readerSettings.get_trial_prefix() +
-                                               "_accelerations.sto");
-  // Gyro
-  const OpenSim::TimeSeriesTableVec3 &gyroTableTyped =
-      reader.getAngularVelocityTable(tables);
-  OpenSim::STOFileAdapterVec3::write(gyroTableTyped,
-                            folder + readerSettings.get_trial_prefix() + "_gyros.sto");
-  // Orientations
-  const OpenSim::TimeSeriesTableQuaternion &quatTableTyped =
-      reader.getOrientationsTable(tables);
+    OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(
+        quatTableTyped,
+        folder + readerSettings.get_trial_prefix() + imu_desc + "_orientations.sto");
+  }
 
-  OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(
-      quatTableTyped, folder + readerSettings.get_trial_prefix() + "_orientations.sto");
   return 0;
 }
