@@ -109,6 +109,7 @@ int main() {
   }
 
   // std::vector<double> decimalValues4 = uniformTimeSamples(offset, rate, numEl);
+  // const auto times = createVectorLinspace(rowNumber, 0.0, (rowNumber - 1) * timeIncrement);
 
   std::vector<double> decimalValues4 = createVectorLinspace(numEl,offset,last_num);
 
