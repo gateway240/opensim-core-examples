@@ -6,8 +6,8 @@ from collections import defaultdict
 
 import xml.etree.ElementTree as ET
 
-directory_to_traverse = "/home/alexbeat/AlexDev/opensim-models"  # Change this to your target directory
-# directory_to_traverse = "/home/alexbeat/opensim-workspace/opensim-core-source"  # Change this to your target directory
+# directory_to_traverse = "/home/alexbeat/AlexDev/opensim-models"  # Change this to your target directory
+directory_to_traverse = "/home/alexbeat/opensim-workspace/opensim-core-source"  # Change this to your target directory
 
 def find_and_replace(file_path, search_key, old_substring, new_substring):
     try:
@@ -117,9 +117,6 @@ def parse_osim_file(osim_file):
                 print(f"Ixx={new_values[0]}, Iyy={new_values[1]}, Izz={new_values[2]} ==> minimum change (modifying {modified_element}) by: {min_change} ")
                 
                 print(f"Inequality now satisfied: {check_triangle_inequality(new_values[0], new_values[1], new_values[2])}\n")
-                # Update the inertia element with the new values
-                inertia.text = f"{new_values[0]} {new_values[1]} {new_values[2]} 0 0 0"  # Assuming the last three values remain unchanged
-
                 find_and_replace(osim_file,'<inertia>', str(modified_element_original), str(modified_element_value))
 
 
@@ -152,10 +149,6 @@ def main(directory):
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         # Map the process_file function to the file paths
         results = list(executor.map(parse_osim_file, files))
-
-    # Print the results (file sizes in this case)
-    # for file_path, size in zip(sto_files, results):
-    #     print(f"Processed {file_path}: {size}")
 
 
 if __name__ == "__main__":
