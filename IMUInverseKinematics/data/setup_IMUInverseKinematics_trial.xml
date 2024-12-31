@@ -14,7 +14,7 @@
 		<!--Name/path to a .trc or .sto file of type Vec3 of marker data.-->
 		<marker_file></marker_file>
 		<!--Name/path to a .sto file of sensor frame orientations as quaternions.-->
-		<orientations_file>l_comf_01-000_orientations-unif.sto</orientations_file>
+		<orientations_file>l_comf_01_orientations.sto</orientations_file>
 		<!--Name of the directory where results are written. Be default this is the directory in which the setup file is be  executed.-->
 		<results_directory>results</results_directory>
 	</IMUInverseKinematicsTool>

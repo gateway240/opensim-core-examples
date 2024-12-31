@@ -7,7 +7,9 @@ from collections import defaultdict
 import xml.etree.ElementTree as ET
 
 # directory_to_traverse = "/home/alexbeat/AlexDev/opensim-models"  # Change this to your target directory
-directory_to_traverse = "/home/alexbeat/opensim-workspace/opensim-core-source"  # Change this to your target directory
+# directory_to_traverse = "/home/alexbeat/opensim-workspace/opensim-core-source"  # Change this to your target directory
+directory_to_traverse = "/home/alexbeat/AlexDev/opensim-core-extension"  # Change this to your target directory
+
 
 def find_and_replace(file_path, search_key, old_substring, new_substring):
     try:
