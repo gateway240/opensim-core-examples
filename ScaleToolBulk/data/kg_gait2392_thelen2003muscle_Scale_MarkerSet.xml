@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<OpenSimDocument Version="20302">
+<OpenSimDocument Version="40000">
 	<MarkerSet name="kg_gait2392_thelen2003muscle_Scale">
 		<defaults>
 			<ControlLinear name="default">
@@ -34,7 +34,7 @@
 				<!--Maximum allowed value for control signal. Used primarily when solving
 				    for control values-->
 				<max_control> infinity </max_control>
-				<body>  </body>
+				<body></body>
 				<point>       0.00000000       0.00000000       0.00000000 </point>
 				<point_is_global> false </point_is_global>
 				<direction>      -1.00000000      -0.00000000      -0.00000000 </direction>
@@ -245,1146 +245,491 @@
 				    this property.-->
 				<r2>       0.00000000       0.00000000       0.00000000 </r2>
 				<!--Name of the coordinate to be tracked.-->
-				<coordinate>  </coordinate>
+				<coordinate></coordinate>
 				<!--Error limit on the tracking accuracy for this coordinate. If the
 				    tracking errors approach this limit, the weighting for this coordinate
 				    is increased.-->
 				<limit>       0.00000000 </limit>
 			</CMC_Joint>
 		</defaults>
-	<objects>
-		<Marker name="Sternum">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> torso </body>
-			<!--Location of a marker on the body segment.-->
-				<location>       0.07000000       0.30000000       0.00000000 </location>
-			<!--Flag (true or false) specifying whether or not a marker should be kept
-			    fixed in the marker placement step.  i.e. If false, the marker is
-			    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
+		<objects>
+			<Marker name="RFoot2">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/toes_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.061200000000000004 0.018000000000000002 -0.021079999999999988</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
 			</Marker>
-			<Marker name="R.Acromium">
-			<!--Body segment in the model on which the marker resides.-->
-			<body> torso </body>
-				<!--Location of a marker on the body segment.-->
-				<location>      -0.03000000       0.44000000       0.15000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Acromium">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> torso </body>
-				<!--Location of a marker on the body segment.-->
-				<location>      -0.03000000       0.44000000      -0.15000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="Top.Head">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> torso </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.00084000       0.65700000       0.00000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.ASIS">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> pelvis </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.02000000       0.03000000       0.12800000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.ASIS">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> pelvis </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.02000000       0.03000000      -0.12800000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="V.Sacral">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> pelvis </body>
-				<!--Location of a marker on the body segment.-->
-				<location>      -0.16000000       0.04000000       0.00000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Thigh.Upper">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> femur_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.01800000      -0.20000000       0.06400000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Thigh.Front">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> femur_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.08000000      -0.25000000       0.00470000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Thigh.Rear">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> femur_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.01000000      -0.30000000       0.06000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Knee.Lat">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> femur_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.00000000      -0.40400000       0.05000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Knee.Med">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> femur_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.00000000      -0.40400000      -0.05000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Shank.Upper">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> tibia_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.00500000      -0.06500000       0.05000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Shank.Front">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> tibia_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.05000000      -0.08000000       0.00000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Shank.Rear">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> tibia_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.02000000      -0.13000000       0.05000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Ankle.Lat">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> tibia_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>      -0.00500000      -0.41000000       0.05300000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Ankle.Med">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> tibia_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.00600000      -0.38880000      -0.03800000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Heel">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>      -0.02000000       0.02000000       0.00000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Midfoot.Sup">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.13000000       0.03000000      -0.03000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Midfoot.Lat">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.10000000       0.02000000       0.04000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Toe.Lat">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.19000000       0.00000000       0.06500000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Toe.Med">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.19000000       0.00500000      -0.04000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="R.Toe.Tip">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_r </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.26000000       0.00500000       0.00000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Thigh.Upper">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> femur_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.01800000      -0.20000000      -0.06400000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Thigh.Front">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> femur_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.08000000      -0.25000000      -0.00470000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Thigh.Rear">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> femur_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.01000000      -0.30000000      -0.06000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Knee.Lat">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> femur_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.00000000      -0.40400000      -0.05000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Knee.Med">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> femur_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.00000000      -0.40400000       0.05000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Shank.Upper">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> tibia_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.00500000      -0.06500000      -0.05000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Shank.Front">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> tibia_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.05000000      -0.08000000       0.00000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Shank.Rear">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> tibia_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>      -0.02000000      -0.13000000      -0.05000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Ankle.Lat">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> tibia_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>      -0.00500000      -0.41000000      -0.05300000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Ankle.Med">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> tibia_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.00600000      -0.38880000       0.03800000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Heel">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>      -0.02000000       0.02000000       0.00000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Midfoot.Sup">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.13000000       0.03000000       0.03000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Midfoot.Lat">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.10000000       0.02000000      -0.04000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Toe.Lat">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.19000000       0.00000000      -0.06500000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Toe.Med">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.19000000       0.00500000       0.04000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-		<Marker name="L.Toe.Tip">
-				<!--Body segment in the model on which the marker resides.-->
-				<body> calcn_l </body>
-				<!--Location of a marker on the body segment.-->
-				<location>       0.26000000       0.00500000       0.00000000 </location>
-				<!--Flag (true or false) specifying whether or not a marker should be kept
-				    fixed in the marker placement step.  i.e. If false, the marker is
-				    allowed to move.-->
-			<fixed> false </fixed>
-				<!--Used for displaying a marker in the visuals.-->
-				<VisibleObject name="">
-					<!--Set of geometry files and associated attributes, allow .vtp, .stl,
-					    .obj-->
-					<GeometrySet name="">
-						<objects/>
-						<groups/>
-					</GeometrySet>
-					<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-					<scale_factors>       1.00000000       1.00000000       1.00000000 </scale_factors>
-					<!--transform relative to owner specified as 3 rotations (rad) followed by
-					    3 translations rX rY rZ tx ty tz-->
-					<transform>      -0.00000000       0.00000000      -0.00000000       0.00000000       0.00000000       0.00000000 </transform>
-					<!--Whether to show a coordinate frame-->
-					<show_axes> false </show_axes>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for
-					    individual geometries-->
-					<display_preference> 4 </display_preference>
-				</VisibleObject>
-		</Marker>
-	</objects>
+			<Marker name="LFoot2">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/toes_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.061200000000000004 0.018000000000000002 0.021079999999999988</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFoot1">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.02 0.016474599999999999 0.0068215300000000001</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFemur6">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0 -0.40698200000000001 0.051037899999999997</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFemur6">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0 -0.40698200000000001 -0.051037899999999997</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LTibia6">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.0030000000000000001 -0.40999999999999998 -0.056000000000000001</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RTibia6">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.0030000000000000001 -0.40999999999999998 0.056000000000000001</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFoot1">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.02 0.016474599999999999 -0.0068215300000000001</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFemur5">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0 -0.40698200000000001 -0.051037899999999997</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFemur5">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0 -0.40698200000000001 0.051037899999999997</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RTibia5">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.0040000000000000001 -0.40000000000000002 -0.035999999999999997</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LTibia5">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.0040000000000000001 -0.40000000000000002 0.035999999999999997</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFoot3">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/toes_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.01620000000000002 0.022000000000000002 0.033919999999999992</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFoot3">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/toes_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.01620000000000002 0.022000000000000002 -0.033919999999999992</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="Torso4">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/torso</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.076797751227643971 0.4131205260289611 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="Torso2">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/torso</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.0071925475723243724 0.41736594565125312 0.15114453843619882</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="Torso3">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/torso</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.0071925499999999998 0.41736600000000001 -0.151145</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="Torso1">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/torso</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.049907615978152603 0.36540912289037963 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFemur1">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.023383399999999999 -0.17047499999999999 0.070000000000000007</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFemur2">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.029999999999999999 -0.18194532927212784 0.070000000000000007</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFemur3">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.029999999999999999 -0.24890499999999999 0.070000000000000007</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFemur4">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.018900406735340353 -0.23370790991807397 0.070000000000000007</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFemur2">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.023383399999999999 -0.181945 -0.070000000000000007</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFemur1">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.029999999999999999 -0.17047499999999999 -0.070000000000000007</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFemur4">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.029999999999999999 -0.233708 -0.070000000000000007</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFemur3">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.018900400000000001 -0.24890499999999999 -0.070000000000000007</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RTibia1">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.032481000000000003 -0.16503799999999999 0.059999999999999998</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RTibia2">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.023723500000000002 -0.184276 0.059999999999999998</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RTibia3">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.022533682518009801 -0.26239303168517913 0.058549239269327785</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RTibia4">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.033087967316473357 -0.24535399999999999 0.059999999999999998</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LTibia2">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.032481000000000003 -0.184276 -0.059999999999999998</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LTibia1">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.023723500000000002 -0.16500000000000001 -0.059999999999999998</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LTibia4">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.0225337 -0.245 -0.058549200000000003</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LTibia3">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.033087999999999999 -0.26239299999999999 -0.059999999999999998</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="Pelvis1">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/pelvis</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.20896996736237386 0.0285878 -0.06334142585522165</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="Pelvis4">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/pelvis</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.20896999999999999 -0.05074529567733977 -0.063341400000000006</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="Pelvis3">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/pelvis</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.20896999999999999 -0.0507453 0.063341400000000006</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="Pelvis2">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/pelvis</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.20896999999999999 0.0285878 0.063341400000000006</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFoot4">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.128 0.065000000000000002 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFoot5">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.16 0.050000000000000003 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFoot4">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.128 0.065000000000000002 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFoot5">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.16 0.050000000000000003 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="Pelvis_LFemur_score">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0 0 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="Pelvis_RFemur_score">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/femur_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0 0 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RKnee">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0 0 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LKnee">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/tibia_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0 0 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RTibia_RFoot_score">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/talus_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0 0 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LTibia_LFoot_score">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/talus_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0 0 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFoot1_flat">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.02 0 -0.0068215300000000001</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFoot2_flat">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/toes_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.061200000000000004 0 -0.021079999999999988</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFoot3_flat">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/toes_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.01620000000000002 0 0.033919999999999992</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFoot1_flat">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>-0.02 0 0.0068215300000000001</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFoot2_flat">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/toes_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.061200000000000004 0 0.021079999999999988</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFoot3_flat">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/toes_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.01620000000000002 0 -0.033919999999999992</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFoot4_flat">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.128 0 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RFoot5_flat">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_r</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.16 0 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFoot4_flat">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.128 0 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="LFoot5_flat">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/calcn_l</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.16 0 0</location>
+				<!--Flag (true or false) specifying whether the marker is fixed in its parent frame during the marker placement step of scaling.  If false, the marker is free to move within its parent Frame to match its experimental counterpart.-->
+				<fixed>false</fixed>
+			</Marker>
+			<Marker name="RASIS">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/pelvis</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.0085834358209185106 0.0036833793416480558 0.12380763752441414</location>
+			</Marker>
+			<Marker name="LASIS">
+				<!--Path to a Component that satisfies the Socket 'parent_frame' of type PhysicalFrame (description: The frame to which this station is fixed.).-->
+				<socket_parent_frame>/bodyset/pelvis</socket_parent_frame>
+				<!--The fixed location of the station expressed in its parent frame.-->
+				<location>0.0085834358209185106 0.0036833793416480558 -0.12380763752441414</location>
+			</Marker>
+		</objects>
 		<groups/>
 	</MarkerSet>
 </OpenSimDocument>

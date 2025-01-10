@@ -22,86 +22,241 @@
  * -------------------------------------------------------------------------- */
 
 // INCLUDES
-#include <OpenSim/Common/C3DFileAdapter.h>
+#include <OpenSim/Common/IO.h>
 #include <OpenSim/Common/STOFileAdapter.h>
 #include <OpenSim/Common/TRCFileAdapter.h>
+#include <OpenSim/Tools/ScaleTool.h>
 
-#include <OpenSim/Common/ExperimentalSensor.h>
-#include <OpenSim/Common/XsensDataReader.h>
-#include <OpenSim/Common/XsensDataReaderSettings.h>
-
+#include <algorithm> // For std::find_if
 #include <chrono> // for std::chrono functions
 #include <clocale>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <thread>
+#include <vector>
 
 namespace fs = std::filesystem;
 
+
 const std::string dirData = "data";
 const std::string fileNameParticipants = "info_participants.csv";
+const std::string fileNameCalibration = "calib_static_markers.trc";
+const std::string fileNameModel = "gait2392_thelen2003muscle.osim";
+const std::string fileNameMarkerSet = "kg_gait2392_thelen2003muscle_Scale_MarkerSet.xml";
 // Rotation from marker space to OpenSim space (y is up)
-const SimTK::Vec3 rotations(-SimTK::Pi/2,0,0);
-const SimTK::Rotation sensorToOpenSim = SimTK::Rotation(
-    SimTK::BodyOrSpaceType::SpaceRotationSequence, rotations[0], SimTK::XAxis,
-      rotations[1], SimTK::YAxis, rotations[2], SimTK::ZAxis);
+// This is the rotation for the kuopio gait dataset
+const SimTK::Vec3 rotations(-SimTK::Pi/2,SimTK::Pi/2,0);
 
-const std::vector<OpenSim::ExperimentalSensor> expSens1and2 = {
-    OpenSim::ExperimentalSensor("_00B42DA3", "pelvis_imu"),
-    OpenSim::ExperimentalSensor("_00B42DAE", "tibia_r_imu"),
-    OpenSim::ExperimentalSensor("_00B42DA2", "femur_r_imu"),
-    OpenSim::ExperimentalSensor("_00B42D53", "tibia_l_imu"),
-    OpenSim::ExperimentalSensor("_00B42D4D", "femur_l_imu"),
-    OpenSim::ExperimentalSensor("_00B42D48", "calcn_r_imu"),
-    OpenSim::ExperimentalSensor(
-        "_00B42D4E", "calcn_l_imu") // Note subject 1 and 2 have this IMU
+struct Participant {
+    int ID;
+    int Age;
+    char Gender; // 'M' or 'F'
+    char Leg; // Assuming 'L' or 'R'
+    double Height;
+    std::vector<std::string> Invalid_trials; // Store invalid trials as a vector of strings
+    int IAD;
+    int Left_knee_width;
+    int Right_knee_width;
+    int Left_ankle_width;
+    int Right_ankle_width;
+    int Left_thigh_length;
+    int Right_thigh_length;
+    int Left_shank_length;
+    int Right_shank_length;
+    double Mass;
+    double ICD;
+    double Left_knee_width_mocap;
+    double Right_knee_width_mocap;
 };
 
-const std::vector<OpenSim::ExperimentalSensor> expSensRemaining = {
-    OpenSim::ExperimentalSensor("_00B42DA3", "pelvis_imu"),
-    OpenSim::ExperimentalSensor("_00B42DAE", "tibia_r_imu"),
-    OpenSim::ExperimentalSensor("_00B42DA2", "femur_r_imu"),
-    OpenSim::ExperimentalSensor("_00B42D53", "tibia_l_imu"),
-    OpenSim::ExperimentalSensor("_00B42D4D", "femur_l_imu"),
-    OpenSim::ExperimentalSensor("_00B42D48", "calcn_r_imu"),
-    OpenSim::ExperimentalSensor("_00B42D51", "calcn_l_imu")};
+std::vector<Participant> parseCSV(const std::string& filename) {
+    std::vector<Participant> participants;
+    std::ifstream file(filename);
+    std::string line;
+
+    // Skip the header line
+    if (std::getline(file, line)) {
+        // Process each line in the CSV file
+        while (std::getline(file, line)) {
+            std::istringstream ss(line);
+            Participant participant;
+            std::string invalid_trials;
+
+            // Read each field separated by commas
+            std::string token;
+            try {
+              std::getline(ss, token, ','); participant.ID = std::stoi(token);
+              std::getline(ss, token, ','); participant.Age = std::stoi(token);
+              std::getline(ss, token, ','); participant.Gender = token[0];
+              std::getline(ss, token, ','); participant.Leg = token[0]; // Assuming single character
+              std::getline(ss, token, ','); participant.Height = std::stod(token);
+              std::getline(ss, token, ','); participant.IAD = std::stoi(token);
+              std::getline(ss, token, ','); participant.Left_knee_width = std::stoi(token);
+              std::getline(ss, token, ','); participant.Right_knee_width = std::stoi(token);
+              std::getline(ss, token, ','); participant.Left_ankle_width = std::stoi(token);
+              std::getline(ss, token, ','); participant.Right_ankle_width = std::stoi(token);
+              std::getline(ss, token, ','); participant.Left_thigh_length = std::stoi(token);
+              std::getline(ss, token, ','); participant.Right_thigh_length = std::stoi(token);
+              std::getline(ss, token, ','); participant.Left_shank_length = std::stoi(token);
+              std::getline(ss, token, ','); participant.Right_shank_length = std::stoi(token);
+              std::getline(ss, token, ','); participant.Mass = std::stod(token);
+              std::getline(ss, token, ','); participant.ICD = std::stod(token);
+              std::getline(ss, token, ','); participant.Left_knee_width_mocap = std::stod(token);
+              std::getline(ss, token, ','); participant.Right_knee_width_mocap = std::stod(token);
+
+              std::getline(ss, invalid_trials, ','); // Read the invalid trials as a single string
+              // std::istringstream invalid_ss(invalid_trials);
+              // while (std::getline(invalid_ss, token, ',')) {
+              //     participant.Invalid_trials.push_back(token);
+              // }
+              } catch (const std::invalid_argument& e) {
+                std::cerr << "Error parsing line: " << line << "\n" << e.what() << std::endl;
+                continue; // Skip this line and continue
+              }
+            // Add the participant to the vector
+            participants.push_back(participant);
+        }
+    }
+
+    return participants;
+}
+
+// Function to rotate a table of Vec3 elements
+void rotateMarkerTable(
+        OpenSim::TimeSeriesTableVec3& table,
+        const SimTK::Rotation_<double>& rotationMatrix)
+{
+    const SimTK::Rotation R_XG = rotationMatrix;
+
+    int nc = int(table.getNumColumns());
+    size_t nt = table.getNumRows();
+
+    for (size_t i = 0; i < nt; ++i) {
+        auto row = table.updRowAtIndex(i);
+        for (int j = 0; j < nc; ++j) {
+            row[j] = R_XG * row[j];
+        }
+    }
+    return;
+}
+
+std::string getTwoDigitString(int number) {
+    // Check if the number is within the valid range (0 to 99)
+    if (number < 0 || number > 99) {
+        return "Error: Number out of range"; // Handle out of range
+    }
+
+    // Create a string stream to format the number
+    std::ostringstream oss;
+    oss << std::setw(2) << std::setfill('0') << number; // Format to two digits
+
+    return oss.str(); // Return the formatted string
+}
+
+
+const std::string fileNameSetupScale = "kg_gait_gait2392_thelen2003muscle_Setup_Scale.xml";
+const OpenSim::ScaleTool _subject(fileNameSetupScale);
 
 void process(
-    const fs::path &sourceDir, const fs::path &resultDir, const std::string &fileStem,
-    const std::vector<OpenSim::ExperimentalSensor> &experimentalSensors) {
-  std::cout << "---Starting Processing: " << sourceDir << " stem: " << fileStem << std::endl;
+    const fs::path &sourceDir, const fs::path &resultDir, const std::string &fileStem, const Participant participant) {
+  std::cout << "---Starting Processing: " << sourceDir << " stem: " << fileStem << " Participant: " << participant.ID << std::endl;
   try {
-    // // Xsense Reader Settings
-    // OpenSim::XsensDataReaderSettings settings =
-    //     OpenSim::XsensDataReaderSettings();
-    // settings.set_ExperimentalSensors(experimentalSensors);
-    // settings.set_data_folder(file);
-    // settings.set_trial_prefix(trial_prefix);
-    // OpenSim::XsensDataReader reader(settings);
+    // OpenSim::IO::SetDigitsPad(4);
 
-    // std::string folder = settings.get_data_folder();
-    // std::cout << "Reading folder: " << folder
-    //           << " Reading trial prefix: " << trial_prefix << std::endl;
-    // OpenSim::DataAdapter::OutputTables tables = reader.read(folder);
+    // Create a new filename by modifying the original path
+    const std::filesystem::path calibFilePath = sourceDir / fileNameCalibration; // Start with the original path
 
-    // const std::string base_filename = file.string() + settings.get_trial_prefix();
-    // // Orientations
-    // const OpenSim::TimeSeriesTableQuaternion &quatTableTyped =
-    //     reader.getOrientationsTable(tables);
-    // const std::string orientationsOutputPath = base_filename + "_orientations.sto";
-    // OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(quatTableTyped,
-    //                                                    orientationsOutputPath);
+    // ROTATE the marker table so the orientation is correct
+    OpenSim::TRCFileAdapter trcfileadapter{};
+    OpenSim::TimeSeriesTableVec3 table{ calibFilePath.string() };
+    
+    const SimTK::Rotation sensorToOpenSim = SimTK::Rotation(
+    SimTK::BodyOrSpaceType::SpaceRotationSequence, rotations[0], SimTK::XAxis,
+      rotations[1], SimTK::YAxis, rotations[2], SimTK::ZAxis);
+    rotateMarkerTable(table, sensorToOpenSim);
 
-    // std::cout << "\tWrote'" << orientationsOutputPath << std::endl;
+    // Get the filename without extension
+    const std::string rotatedCalibFilename = calibFilePath.stem().string() + "_rotated" + calibFilePath.extension().string();
+    const std::filesystem::path markerFilePath = resultDir / rotatedCalibFilename;
+    // std::cout << markerFilePath.string() << std::endl;
+    // Write the rotated file
+    // Get the parent directory
 
-    // // Accelerometer
-    // const OpenSim::TimeSeriesTableVec3 &accelTableTyped =
-    //     reader.getLinearAccelerationsTable(tables);
-    // const std::string accelerationsOutputPath = base_filename + "_accelerations.sto";
-    // OpenSim::STOFileAdapterVec3::write(accelTableTyped,accelerationsOutputPath);
-    // std::cout << "\tWrote'" << accelerationsOutputPath << std::endl;
+    std::filesystem::path newDirectory = markerFilePath.parent_path();
+    if (!std::filesystem::exists(newDirectory)) {
+        // Create the directory
+        if (std::filesystem::create_directories(newDirectory)) {
+            std::cout << "Directories created: " << newDirectory << std::endl;
+        } else {
+            std::cerr << "Failed to create directory: " << newDirectory << std::endl;
+        }
+    }
+    const std::string markerFileName = markerFilePath.string();
+    
+    trcfileadapter.write(table, markerFileName);
+
+    // Copy over the model
+    const std::string fileNameSetupScale = "kg_gait_gait2392_thelen2003muscle_Setup_Scale.xml";
+    // const std::filesystem::path setupScaleSourcePath(fileNameSetupScale);
+    const std::filesystem::path modelSourcePath(fileNameModel);
+    const std::filesystem::path markerSetSourcePath(fileNameMarkerSet);
+    // const std::filesystem::path setupScaleDestinationPath = newDirectory / fileNameSetupScale;
+    const std::filesystem::path modelDestinationPath = newDirectory / fileNameModel;
+    const std::filesystem::path markerSetDestinationPath = newDirectory / fileNameMarkerSet;
+    try {
+        // Copy the file to the destination directory
+        // std::filesystem::copy_file(setupScaleSourcePath,setupScaleDestinationPath, std::filesystem::copy_options::overwrite_existing);
+        std::filesystem::copy_file(modelSourcePath, modelDestinationPath, std::filesystem::copy_options::overwrite_existing);
+        std::filesystem::copy_file(markerSetSourcePath, markerSetDestinationPath, std::filesystem::copy_options::overwrite_existing);
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Error copying file: " << e.what() << std::endl;
+    }
+    // Construct model and read parameters file
+
+    // const std::string fileNameModelScaler = "kg_gait_gait2392_thelen2003muscle_Setup_Model_Scaler.xml";
+
+    // std::unique_ptr<OpenSim::ModelScaler> modelScaler(new OpenSim::ModelScaler());
+    // const std::filesystem::path dirPath = dirData;
+    // const std::filesystem::path p = dirPath / fileNameSetupScale;
+    // OpenSim::ScaleTool subject(setupScaleDestinationPath.string());
+    OpenSim::ScaleTool subject(fileNameSetupScale);
+
+    subject.setPathToSubject((newDirectory / "").string());
+    subject.setSubjectMass(participant.Mass);
+    subject.setSubjectHeight(participant.Height);
+    subject.setSubjectAge(participant.Age);
+
+    subject.run();
+    // Clear out the pointer
+    // subject.reset();
+        // Iterate through the directory
+    for (const auto& entry : std::filesystem::directory_iterator(newDirectory)) {
+        if (entry.is_regular_file()) { // Check if it's a regular file
+            std::string filename = entry.path().filename().string();
+            std::string newFilename = filename;
+
+            // Check if "XX" is in the filename
+            size_t pos = newFilename.find("XX");
+            if (pos != std::string::npos) {
+                // Replace "XX" with "04"
+                newFilename.replace(pos, 2, getTwoDigitString(participant.ID));
+
+                // Create the new file path
+                std::filesystem::path newFilePath = newDirectory / newFilename;
+
+                // Rename the file
+                try {
+                    std::filesystem::rename(entry.path(), newFilePath);
+                    std::cout << "Renamed: " << filename << " to " << newFilename << std::endl;
+                } catch (const std::filesystem::filesystem_error& e) {
+                    std::cerr << "Error renaming file: " << e.what() << std::endl;
+                }
+            }
+        }
+    }
 
   } catch (const std::exception &e) {
     // Catching standard exceptions
@@ -109,17 +264,18 @@ void process(
   } catch (...) {
     std::cout << "Error in processing Dir: " << sourceDir << std::endl;
   }
+
   std::cout << "-------Finished Result: " << resultDir << std::endl;
 }
 
-void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
+void processDirectory(const fs::path &dirPath, const fs::path &resultPath, std::vector<Participant>& participants) {
 
   std::vector<std::thread> threads;
   // Iterate through the directory
   for (const auto &entry : fs::directory_iterator(dirPath)) {
     if (entry.is_directory()) {
       // Recursively process subdirectory
-      processDirectory(entry.path(), resultPath);
+      processDirectory(entry.path(), resultPath, participants);
     } else if (entry.is_regular_file()) {
       // Check if the file has a .mat extension
       // std::cout << entry.path().filename() << std::endl;
@@ -130,17 +286,24 @@ void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
         const std::filesystem::path firstParent = textFilePath.parent_path();
         const std::filesystem::path secondParent = firstParent.parent_path();
 
-        const std::filesystem::path sourceDir =
-            dirPath / secondParent.filename() / firstParent.filename() / "";
         const std::filesystem::path resultDir =
             resultPath / secondParent.filename() / firstParent.filename() / "";
+        const int participantId = std::stoi(secondParent.filename());
+        // std::cout << "Participant: " << participantId << std::endl;
+        auto it = std::find_if(participants.begin(), 
+             participants.end(), 
+             [&cp = participantId]
+             (const Participant& p) { return cp == p.ID; }); 
+        // Find the correct participant from the participants vector
+        // Output the found participant or a message if not found
+        if (it != participants.end()) {
+          // std::cout << "Found Participant: " << std::endl;
+          const Participant participant = *it;
+          // process(dirPath, resultDir, textFilePath.stem(), participant);
+          threads.emplace_back(process, dirPath, resultDir, textFilePath.stem(), participant);
+        }
 
-        // Per Kuopio Gait Dataset specs subjects 1 and 2 have different foot
-        // IMU
-        bool subject1or2 =
-            secondParent.filename() == "01" || secondParent.filename() == "02";
-        threads.emplace_back(process, sourceDir, resultDir, textFilePath.stem(),
-                             subject1or2 ? expSens1and2 : expSensRemaining);
+                  
       }
     }
   }
@@ -169,7 +332,23 @@ int main(int argc, char *argv[]) {
 
   fs::path outputPath = argv[2];
 
-  processDirectory(directoryPath, outputPath);
+  std::vector<Participant> participants = parseCSV(fileNameParticipants);
+
+  // Output the parsed data
+  std::cout << "Participant List: " << std::endl;
+  for (const auto& participant : participants) {
+      std::cout << "ID: " << participant.ID << ", Age: " << participant.Age
+                << ", Gender: " << participant.Gender << ", Leg: " << participant.Leg
+                << ", Height: " << participant.Height
+                << ", Mass: " << participant.Mass << std::endl;
+      // std::cout << "Invalid Trials: ";
+      // for (const auto& trial : participant.Invalid_trials) {
+      //     std::cout << trial << " ";
+      // }
+      // std::cout << std::endl;
+  }
+
+  processDirectory(directoryPath, outputPath, participants);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Runtime = "
             << std::chrono::duration_cast<std::chrono::microseconds>(end -

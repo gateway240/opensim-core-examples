@@ -21,3 +21,13 @@ file(GLOB SOURCE_FILES *.h *.cpp)
 add_executable(${TARGET} ${SOURCE_FILES})
 
 target_link_libraries(${TARGET} ${OpenSim_LIBRARIES})
+
+# This block symlinks the data files from data additional files into the running directory
+set(DATA_DIR "${CMAKE_SOURCE_DIR}/data")
+file(GLOB FILES "${DATA_DIR}/*")
+foreach(FILE ${FILES})
+    get_filename_component(FILENAME ${FILE} NAME)
+    add_custom_command(TARGET ${TARGET} PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E create_symlink
+                    ${FILE} $<TARGET_FILE_DIR:${TARGET}>/${FILENAME})
+endforeach()
