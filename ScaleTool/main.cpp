@@ -30,11 +30,19 @@
 
 
 #include <string>
+#include <sstream>
 #include <filesystem>
 #include <iostream>
 #include <clocale>
 #include <chrono> // for std::chrono functions
+#include <vector>
 
+struct Participant {
+    int ID; // study id
+    int Age; // 1-...
+    int Height; // in cm
+    double Mass; // in kg
+};
 
 const std::string dirData = "data";
 const std::string fileNameParticipants = "info_participants.csv";
@@ -62,12 +70,16 @@ void rotateMarkerTable(
     return;
 }
 
-
 int main()
 {
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     // SET OUTPUT FORMATTING
     OpenSim::IO::SetDigitsPad(4);
+
+    // Got Participant information from spreadsheet
+    Participant subject01 = Participant{
+        1,38,175, 75.5278615475429
+    };
 
     // ROTATE the marker table so the orientation is correct
     // Create a new filename by modifying the original path
@@ -85,14 +97,14 @@ int main()
     rotateMarkerTable(table, sensorToOpenSim);
     trcfileadapter.write(table, newFileName);
 
-    // std::cout << table << std::endl;
-
     // Construct model and read parameters file
     const std::string fileNameSetupScale = "subject01_kg_gait_gait2392_thelen2003muscle_Setup_Scale.xml";
     // const std::filesystem::path dirPath = dirData;
     // const std::filesystem::path p = dirPath / fileNameSetupScale;
     std::unique_ptr<OpenSim::ScaleTool> subject(new OpenSim::ScaleTool(fileNameSetupScale));
-    // subject->setSubjectMass(90);
+    subject->setSubjectMass(subject01.Mass);
+    subject->setSubjectHeight(subject01.Height);
+    subject->setSubjectAge(subject01.Age);
 
     // Keep track of the folder containing setup file, will be used to locate results to compare against
     const std::string setupFilePath=subject->getPathToSubject();
