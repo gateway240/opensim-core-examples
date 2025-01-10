@@ -40,6 +40,14 @@
 
 namespace fs = std::filesystem;
 
+const std::string dirData = "data";
+const std::string fileNameParticipants = "info_participants.csv";
+// Rotation from marker space to OpenSim space (y is up)
+const SimTK::Vec3 rotations(-SimTK::Pi/2,0,0);
+const SimTK::Rotation sensorToOpenSim = SimTK::Rotation(
+    SimTK::BodyOrSpaceType::SpaceRotationSequence, rotations[0], SimTK::XAxis,
+      rotations[1], SimTK::YAxis, rotations[2], SimTK::ZAxis);
+
 const std::vector<OpenSim::ExperimentalSensor> expSens1and2 = {
     OpenSim::ExperimentalSensor("_00B42DA3", "pelvis_imu"),
     OpenSim::ExperimentalSensor("_00B42DAE", "tibia_r_imu"),
@@ -61,47 +69,47 @@ const std::vector<OpenSim::ExperimentalSensor> expSensRemaining = {
     OpenSim::ExperimentalSensor("_00B42D51", "calcn_l_imu")};
 
 void process(
-    const fs::path &file, const std::string &trial_prefix,
+    const fs::path &sourceDir, const fs::path &resultDir, const std::string &fileStem,
     const std::vector<OpenSim::ExperimentalSensor> &experimentalSensors) {
-  std::cout << "---Starting Processing: " << file << std::endl;
+  std::cout << "---Starting Processing: " << sourceDir << " stem: " << fileStem << std::endl;
   try {
-    // Xsense Reader Settings
-    OpenSim::XsensDataReaderSettings settings =
-        OpenSim::XsensDataReaderSettings();
-    settings.set_ExperimentalSensors(experimentalSensors);
-    settings.set_data_folder(file);
-    settings.set_trial_prefix(trial_prefix);
-    OpenSim::XsensDataReader reader(settings);
+    // // Xsense Reader Settings
+    // OpenSim::XsensDataReaderSettings settings =
+    //     OpenSim::XsensDataReaderSettings();
+    // settings.set_ExperimentalSensors(experimentalSensors);
+    // settings.set_data_folder(file);
+    // settings.set_trial_prefix(trial_prefix);
+    // OpenSim::XsensDataReader reader(settings);
 
-    std::string folder = settings.get_data_folder();
-    std::cout << "Reading folder: " << folder
-              << " Reading trial prefix: " << trial_prefix << std::endl;
-    OpenSim::DataAdapter::OutputTables tables = reader.read(folder);
+    // std::string folder = settings.get_data_folder();
+    // std::cout << "Reading folder: " << folder
+    //           << " Reading trial prefix: " << trial_prefix << std::endl;
+    // OpenSim::DataAdapter::OutputTables tables = reader.read(folder);
 
-    const std::string base_filename = file.string() + settings.get_trial_prefix();
-    // Orientations
-    const OpenSim::TimeSeriesTableQuaternion &quatTableTyped =
-        reader.getOrientationsTable(tables);
-    const std::string orientationsOutputPath = base_filename + "_orientations.sto";
-    OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(quatTableTyped,
-                                                       orientationsOutputPath);
+    // const std::string base_filename = file.string() + settings.get_trial_prefix();
+    // // Orientations
+    // const OpenSim::TimeSeriesTableQuaternion &quatTableTyped =
+    //     reader.getOrientationsTable(tables);
+    // const std::string orientationsOutputPath = base_filename + "_orientations.sto";
+    // OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(quatTableTyped,
+    //                                                    orientationsOutputPath);
 
-    std::cout << "\tWrote'" << orientationsOutputPath << std::endl;
+    // std::cout << "\tWrote'" << orientationsOutputPath << std::endl;
 
-    // Accelerometer
-    const OpenSim::TimeSeriesTableVec3 &accelTableTyped =
-        reader.getLinearAccelerationsTable(tables);
-    const std::string accelerationsOutputPath = base_filename + "_accelerations.sto";
-    OpenSim::STOFileAdapterVec3::write(accelTableTyped,accelerationsOutputPath);
-    std::cout << "\tWrote'" << accelerationsOutputPath << std::endl;
+    // // Accelerometer
+    // const OpenSim::TimeSeriesTableVec3 &accelTableTyped =
+    //     reader.getLinearAccelerationsTable(tables);
+    // const std::string accelerationsOutputPath = base_filename + "_accelerations.sto";
+    // OpenSim::STOFileAdapterVec3::write(accelTableTyped,accelerationsOutputPath);
+    // std::cout << "\tWrote'" << accelerationsOutputPath << std::endl;
 
   } catch (const std::exception &e) {
     // Catching standard exceptions
-    std::cerr << "Error in processing File: " << e.what() << std::endl;
+    std::cerr << "Error in processing: " << e.what() << std::endl;
   } catch (...) {
-    std::cout << "Error in processing File: " << file << std::endl;
+    std::cout << "Error in processing Dir: " << sourceDir << std::endl;
   }
-  std::cout << "---Ending Processing: " << file << std::endl;
+  std::cout << "-------Finished Result: " << resultDir << std::endl;
 }
 
 void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
@@ -114,21 +122,24 @@ void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
       processDirectory(entry.path(), resultPath);
     } else if (entry.is_regular_file()) {
       // Check if the file has a .mat extension
-      if (entry.path().extension() == ".mat") {
+      // std::cout << entry.path().filename() << std::endl;
+      if (entry.path().filename() == "calib_static_markers.trc") {
         // Create a corresponding text file
         fs::path textFilePath = entry.path();
         // Get the last two parent directories
         const std::filesystem::path firstParent = textFilePath.parent_path();
         const std::filesystem::path secondParent = firstParent.parent_path();
 
-        std::filesystem::path baseDir =
+        const std::filesystem::path sourceDir =
+            dirPath / secondParent.filename() / firstParent.filename() / "";
+        const std::filesystem::path resultDir =
             resultPath / secondParent.filename() / firstParent.filename() / "";
 
         // Per Kuopio Gait Dataset specs subjects 1 and 2 have different foot
         // IMU
         bool subject1or2 =
             secondParent.filename() == "01" || secondParent.filename() == "02";
-        threads.emplace_back(process, baseDir, textFilePath.stem(),
+        threads.emplace_back(process, sourceDir, resultDir, textFilePath.stem(),
                              subject1or2 ? expSens1and2 : expSensRemaining);
       }
     }

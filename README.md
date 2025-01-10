@@ -54,6 +54,8 @@ const OpenSim::Body& body = model.getBodySet().get("pelvis");
 
 ### Running Bulk scripts
 
+
+Preprocessing
 ```sh
 ./main ~/Downloads/kuopio-gait-dataset ~/data/kuopio-gait-dataset
 7z a -mmt=on ~/data/kuopio-gait-dataset-processed-v2.zip ~/data/kuopio-gait-dataset/*
@@ -61,6 +63,11 @@ const OpenSim::Body& body = model.getBodySet().get("pelvis");
 7z a -mmt=on ~/data/kuopio-gait-dataset-processed-26-51-v2.zip ~/data/kuopio-gait-dataset-processed-26-51/*
 ```
 
+Scale Tool:
+```sh
+./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models
+
+```
 ### Running OpenSim
 ```sh
 ~/opensim-workspace/opensim-gui-source/Gui/opensim/dist/installer/opensim/bin/opensim --jdkhome /usr/lib/jvm/default
