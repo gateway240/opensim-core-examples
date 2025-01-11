@@ -60,7 +60,7 @@ int main()
             // std::unique_ptr<OpenSim::Model> model = std::make_unique<OpenSim::Model>(OpenSim::Model(fileNameModel));
             model->initSystem();
             std::string markerSetPath = 
-                SimTK::Pathname::getAbsolutePathnameUsingSpecifiedWorkingDirectory(_pathToSubject, fileNameMarkerSetWorking);
+                SimTK::Pathname::getAbsolutePathnameUsingSpecifiedWorkingDirectory(_pathToSubject, fileNameMarkerSetBroken);
             std::cout << "Loading marker set from: " << markerSetPath << std::endl;
             OpenSim::MarkerSet markerSet(markerSetPath);
             model->updateMarkerSet(markerSet);
