@@ -306,23 +306,21 @@
 						<MarkerPairSet name="">
 							<objects>
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
+									<markers> Torso3 Torso2 </markers>
+								</MarkerPair>
+								<MarkerPair name="">
+									<markers> Torso1 Torso4 </markers>
+								</MarkerPair>
+								<MarkerPair name="">
 									<markers> Torso1 Pelvis1 </markers>
 								</MarkerPair>
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
 									<markers> Torso2 Pelvis2 </markers>
 								</MarkerPair>
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
 									<markers> Torso3 Pelvis3 </markers>
 								</MarkerPair>
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
 									<markers> Torso4 Pelvis4 </markers>
 								</MarkerPair>
 							</objects>
@@ -347,20 +345,14 @@
 						<MarkerPairSet name="">
 							<objects>
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
 									<markers> Pelvis_LFemur_score Pelvis_RFemur_score </markers>
 								</MarkerPair>
-								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
+								<!-- <MarkerPair name="">
 									<markers> Pelvis1 Pelvis2 </markers>
-								</MarkerPair>
-								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
+								</MarkerPair> -->
+								<!-- <MarkerPair name="">
 									<markers> Pelvis3 Pelvis4 </markers>
-								</MarkerPair>
+								</MarkerPair> -->
 							</objects>
 							<groups/>
 						</MarkerPairSet>
@@ -382,19 +374,25 @@
 						<!--Set of marker pairs used to determine the scale factors.-->
 						<MarkerPairSet name="">
 							<objects>
+								<!-- <MarkerPair name="">
+									<markers> RFemur1 RFemur3</markers>
+								</MarkerPair>
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
+									<markers> RFemur2 RFemur3</markers>
+								</MarkerPair>
+								<MarkerPair name="">
+									<markers> RFemur4 RFemur3</markers>
+								</MarkerPair> -->
+								<MarkerPair name="">
+									<markers> Pelvis_RFemur_score RFemur3</markers>
+								</MarkerPair>
+								<MarkerPair name="">
 									<markers> Pelvis_RFemur_score RKnee</markers>
 								</MarkerPair>
-								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
+								<!-- <MarkerPair name="">
 									<markers> Pelvis_RFemur_score RFemur5</markers>
-								</MarkerPair>
+								</MarkerPair> -->
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
 									<markers> Pelvis_RFemur_score RFemur6</markers>
 								</MarkerPair>
 							</objects>
@@ -423,19 +421,25 @@
 						<!--Set of marker pairs used to determine the scale factors.-->
 						<MarkerPairSet name="">
 							<objects>
+								<!-- <MarkerPair name="">
+									<markers> LFemur1 LFemur4</markers>
+								</MarkerPair>
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
+									<markers> LFemur2 LFemur4</markers>
+								</MarkerPair>
+								<MarkerPair name="">
+									<markers> LFemur3 LFemur4</markers>
+								</MarkerPair> -->
+								<MarkerPair name="">
+									<markers> Pelvis_LFemur_score LFemur4</markers>
+								</MarkerPair>
+								<MarkerPair name="">
 									<markers> Pelvis_LFemur_score LKnee</markers>
 								</MarkerPair>
-								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
+								<!-- <MarkerPair name="">
 									<markers> Pelvis_LFemur_score LFemur5</markers>
-								</MarkerPair>
+								</MarkerPair> -->
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
 									<markers> Pelvis_LFemur_score LFemur6</markers>
 								</MarkerPair>
 							</objects>
@@ -464,10 +468,20 @@
 						<!--Set of marker pairs used to determine the scale factors.-->
 						<MarkerPairSet name="">
 							<objects>
+						  		<!-- <MarkerPair name="">
+									<markers> RTibia1 RTibia2</markers>
+								</MarkerPair>
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
+									<markers> RTibia3 RTibia2</markers>
+								</MarkerPair>
+								<MarkerPair name="">
+									<markers> RTibia4 RTibia2</markers>
+								</MarkerPair> -->
+								<MarkerPair name="">
 									<markers> RKnee RTibia_RFoot_score </markers>
+								</MarkerPair>
+								<MarkerPair name="">
+									<markers> RTibia_RFoot_score RTibia2</markers>
 								</MarkerPair>
 								<MarkerPair name="">
 									<!--Names of two markers, the distance between which is used to compute a
@@ -505,10 +519,20 @@
 						<!--Set of marker pairs used to determine the scale factors.-->
 						<MarkerPairSet name="">
 							<objects>
+								<!-- <MarkerPair name="">
+									<markers> LTibia1 LTibia2</markers>
+								</MarkerPair>
 								<MarkerPair name="">
-									<!--Names of two markers, the distance between which is used to compute a
-									    body scale factor.-->
+									<markers> LTibia3 LTibia2</markers>
+								</MarkerPair>
+								<MarkerPair name="">
+									<markers> LTibia4 LTibia2</markers>
+								</MarkerPair> -->
+								<MarkerPair name="">
 									<markers> LKnee LTibia_LFoot_score </markers>
+								</MarkerPair>
+								<MarkerPair name="">
+									<markers> LTibia_LFoot_score LTibia2</markers>
 								</MarkerPair>
 								<MarkerPair name="">
 									<!--Names of two markers, the distance between which is used to compute a
@@ -725,19 +749,19 @@
 					</IKMarkerTask>
 					<IKMarkerTask name="Torso4">
 						<apply>true</apply>
-						<weight>1.00000000</weight>
+						<weight>100.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="Torso2">
 						<apply>true</apply>
-						<weight>1.00000000</weight>
+						<weight>100.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="Torso3">
 						<apply>true</apply>
-						<weight>1.00000000</weight>
+						<weight>100.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="Torso1">
 						<apply>true</apply>
-						<weight>1.00000000</weight>
+						<weight>100.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="RFemur1">
 						<apply>true</apply>
@@ -837,11 +861,11 @@
 					</IKMarkerTask>
 					<IKMarkerTask name="Pelvis_LFemur_score">
 						<apply>true</apply>
-						<weight>1.00000000</weight>
+						<weight>1000.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="Pelvis_RFemur_score">
 						<apply>true</apply>
-						<weight>1.00000000</weight>
+						<weight>1000.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="RKnee">
 						<apply>true</apply>
@@ -900,11 +924,11 @@
 						<weight>1.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="RASIS">
-						<apply>true</apply>
+						<apply>false</apply>
 						<weight>1.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="LASIS">
-						<apply>true</apply>
+						<apply>false</apply>
 						<weight>1.00000000</weight>
 					</IKMarkerTask>
 					<IKCoordinateTask name="subtalar_angle_r">

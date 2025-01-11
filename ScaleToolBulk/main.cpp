@@ -227,30 +227,31 @@ void process(
       subject.reset();
     }
     // Iterate through the directory
-    for (const auto& entry : std::filesystem::directory_iterator(newDirectory)) {
-        if (entry.is_regular_file()) { // Check if it's a regular file
-            std::string filename = entry.path().filename().string();
-            std::string newFilename = filename;
+    // Rename subjectXX filenames
+    // for (const auto& entry : std::filesystem::directory_iterator(newDirectory)) {
+    //     if (entry.is_regular_file()) { // Check if it's a regular file
+    //         std::string filename = entry.path().filename().string();
+    //         std::string newFilename = filename;
 
-            // Check if "XX" is in the filename
-            size_t pos = newFilename.find("XX");
-            if (pos != std::string::npos) {
-                // Replace "XX" with "04"
-                newFilename.replace(pos, 2, getTwoDigitString(participant.ID));
+    //         // Check if "XX" is in the filename
+    //         size_t pos = newFilename.find("XX");
+    //         if (pos != std::string::npos) {
+    //             // Replace "XX" with "04"
+    //             newFilename.replace(pos, 2, getTwoDigitString(participant.ID));
 
-                // Create the new file path
-                std::filesystem::path newFilePath = newDirectory / newFilename;
+    //             // Create the new file path
+    //             std::filesystem::path newFilePath = newDirectory / newFilename;
 
-                // Rename the file
-                try {
-                    std::filesystem::rename(entry.path(), newFilePath);
-                    std::cout << "Renamed: " << filename << " to " << newFilename << std::endl;
-                } catch (const std::filesystem::filesystem_error& e) {
-                    std::cerr << "Error renaming file: " << e.what() << std::endl;
-                }
-            }
-        }
-    }
+    //             // Rename the file
+    //             try {
+    //                 std::filesystem::rename(entry.path(), newFilePath);
+    //                 std::cout << "Renamed: " << filename << " to " << newFilename << std::endl;
+    //             } catch (const std::filesystem::filesystem_error& e) {
+    //                 std::cerr << "Error renaming file: " << e.what() << std::endl;
+    //             }
+    //         }
+    //     }
+    // }
 
   } catch (const std::exception &e) {
     // Catching standard exceptions
