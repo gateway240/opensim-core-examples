@@ -836,12 +836,12 @@
 						<weight>1.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="Pelvis_LFemur_score">
-						<apply>true</apply>
-						<weight>1000.00000000</weight>
+						<apply>false</apply>
+						<weight>1.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="Pelvis_RFemur_score">
-						<apply>true</apply>
-						<weight>1000.00000000</weight>
+						<apply>false</apply>
+						<weight>1.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="RKnee">
 						<apply>true</apply>
@@ -853,11 +853,11 @@
 					</IKMarkerTask>
 					<IKMarkerTask name="RTibia_RFoot_score">
 						<apply>true</apply>
-						<weight>1000.00000000</weight>
+						<weight>1.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="LTibia_LFoot_score">
 						<apply>true</apply>
-						<weight>1000.00000000</weight>
+						<weight>1.00000000</weight>
 					</IKMarkerTask>
 					<IKMarkerTask name="RFoot1_flat">
 						<apply>true</apply>

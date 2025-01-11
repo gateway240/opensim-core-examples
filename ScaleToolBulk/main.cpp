@@ -156,10 +156,6 @@ std::string getTwoDigitString(int number) {
     return oss.str(); // Return the formatted string
 }
 
-
-const std::string fileNameSetupScale = "kg_gait_gait2392_thelen2003muscle_Setup_Scale.xml";
-const OpenSim::ScaleTool _subject(fileNameSetupScale);
-
 void process(
     const fs::path &sourceDir, const fs::path &resultDir, const std::string &fileStem, const Participant participant) {
   std::cout << "---Starting Processing: " << sourceDir << " stem: " << fileStem << " Participant: " << participant.ID << std::endl;
@@ -199,40 +195,38 @@ void process(
     trcfileadapter.write(table, markerFileName);
 
     // Copy over the model
-    const std::string fileNameSetupScale = "kg_gait_gait2392_thelen2003muscle_Setup_Scale.xml";
-    // const std::filesystem::path setupScaleSourcePath(fileNameSetupScale);
     const std::filesystem::path modelSourcePath(fileNameModel);
     const std::filesystem::path markerSetSourcePath(fileNameMarkerSet);
-    // const std::filesystem::path setupScaleDestinationPath = newDirectory / fileNameSetupScale;
     const std::filesystem::path modelDestinationPath = newDirectory / fileNameModel;
     const std::filesystem::path markerSetDestinationPath = newDirectory / fileNameMarkerSet;
     try {
         // Copy the file to the destination directory
-        // std::filesystem::copy_file(setupScaleSourcePath,setupScaleDestinationPath, std::filesystem::copy_options::overwrite_existing);
         std::filesystem::copy_file(modelSourcePath, modelDestinationPath, std::filesystem::copy_options::overwrite_existing);
         std::filesystem::copy_file(markerSetSourcePath, markerSetDestinationPath, std::filesystem::copy_options::overwrite_existing);
     } catch (const std::filesystem::filesystem_error& e) {
         std::cerr << "Error copying file: " << e.what() << std::endl;
     }
     // Construct model and read parameters file
-
+    const std::string fileNameSetupScale = "kg_gait_gait2392_thelen2003muscle_Setup_Scale.xml";
     // const std::string fileNameModelScaler = "kg_gait_gait2392_thelen2003muscle_Setup_Model_Scaler.xml";
 
     // std::unique_ptr<OpenSim::ModelScaler> modelScaler(new OpenSim::ModelScaler());
     // const std::filesystem::path dirPath = dirData;
     // const std::filesystem::path p = dirPath / fileNameSetupScale;
-    // OpenSim::ScaleTool subject(setupScaleDestinationPath.string());
-    OpenSim::ScaleTool subject(fileNameSetupScale);
+    {
+      std::unique_ptr<OpenSim::ScaleTool> subject(new OpenSim::ScaleTool(fileNameSetupScale));
+    
+      subject->setPathToSubject((newDirectory / "").string());
+      subject->setSubjectMass(participant.Mass);
+      subject->setSubjectHeight(participant.Height);
+      subject->setSubjectAge(participant.Age);
 
-    subject.setPathToSubject((newDirectory / "").string());
-    subject.setSubjectMass(participant.Mass);
-    subject.setSubjectHeight(participant.Height);
-    subject.setSubjectAge(participant.Age);
-
-    subject.run();
-    // Clear out the pointer
-    // subject.reset();
-        // Iterate through the directory
+      subject->run();
+      // Clear out the pointer
+      // subject->_genericModelMaker = NULL;
+      subject.reset();
+    }
+    // Iterate through the directory
     for (const auto& entry : std::filesystem::directory_iterator(newDirectory)) {
         if (entry.is_regular_file()) { // Check if it's a regular file
             std::string filename = entry.path().filename().string();

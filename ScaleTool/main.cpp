@@ -101,7 +101,7 @@ int main()
     const std::string fileNameSetupScale = "subject01_kg_gait_gait2392_thelen2003muscle_Setup_Scale.xml";
     // const std::filesystem::path dirPath = dirData;
     // const std::filesystem::path p = dirPath / fileNameSetupScale;
-    std::unique_ptr<OpenSim::ScaleTool> subject(new OpenSim::ScaleTool(fileNameSetupScale));
+    std::unique_ptr<OpenSim::ScaleTool> subject = std::make_unique<OpenSim::ScaleTool>(OpenSim::ScaleTool(fileNameSetupScale));
     subject->setSubjectMass(subject01.Mass);
     subject->setSubjectHeight(subject01.Height);
     subject->setSubjectAge(subject01.Age);
