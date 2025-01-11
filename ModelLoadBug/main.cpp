@@ -49,7 +49,6 @@ int main()
     const int iterations = 2;
 
     std::unique_ptr<OpenSim::Model> model;
-    // Initializing the model works
     for (int i = 0; i < iterations; i++) {
         try {
             // Works fine
@@ -57,11 +56,11 @@ int main()
             std::string modelPath = 
                 SimTK::Pathname::getAbsolutePathnameUsingSpecifiedWorkingDirectory(_pathToSubject, fileNameModel);
             model = std::make_unique<OpenSim::Model>(OpenSim::Model(modelPath));
-            // std::unique_ptr<OpenSim::Model> model = std::make_unique<OpenSim::Model>(OpenSim::Model(fileNameModel));
             model->initSystem();
             std::string markerSetPath = 
                 SimTK::Pathname::getAbsolutePathnameUsingSpecifiedWorkingDirectory(_pathToSubject, fileNameMarkerSetBroken);
             std::cout << "Loading marker set from: " << markerSetPath << std::endl;
+            // This will work the first time around the loop but cause the error on all subsequent iterations
             OpenSim::MarkerSet markerSet(markerSetPath);
             model->updateMarkerSet(markerSet);
             std::cout << "[" << i << "] Iteration Completed!" << std::endl;
