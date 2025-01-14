@@ -67,6 +67,8 @@ Scale Tool:
 ```sh
 ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models
 
+7z a -mmt=on ~/data/kuopio-gait-dataset-models-v2.zip ~/data/kuopio-gait-dataset-processed-v2-models/*
+
 ```
 ### Running OpenSim
 ```sh

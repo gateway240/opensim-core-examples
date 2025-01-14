@@ -11,7 +11,7 @@
         I.e. the number of significantdigits to which the solution can be trusted.-->
     <accuracy>1e-5</accuracy>
 	  <!--Task set used to specify IK weights.-->
-	  <IKTaskSet file="gait2354_IK_Tasks_uniform.xml"/>
+	  <IKTaskSet file="kg_IK_Tasks_uniform.xml"/>
 	  <!--TRC file (.trc) containing the time history of experimental marker
 	      positions.-->
 	  <marker_file>l_comf_01_markers.trc </marker_file>
@@ -34,7 +34,7 @@
 	      is used to solve the IK problem.-->
 	  <coordinate_file> </coordinate_file>
 	  <!--Time range over which the IK problem is solved.-->
-	  <time_range> 4.65 8.6 </time_range>
+	  <time_range> 5.0 5.01 </time_range>
 	  <!--Name of the motion file (.mot) to which the results should be written.-->
 	  <output_motion_file> subject01_walk1_ik_test.mot </output_motion_file>
     <!--Flag (true or false) indicating whether or not to report marker 
