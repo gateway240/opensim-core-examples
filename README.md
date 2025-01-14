@@ -70,7 +70,19 @@ Scale Tool:
 7z a -mmt=on ~/data/kuopio-gait-dataset-models-v2.zip ~/data/kuopio-gait-dataset-processed-v2-models/*
 
 ```
+
+MarkerIKBulk Tool:
+```sh
+./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-ik-results
+
+7z a -mmt=on ~/data/kuopio-gait-dataset-marker-ik-results.zip ~/data/kuopio-gait-dataset-processed-v2-ik-results/*
+```
 ### Running OpenSim
 ```sh
 ~/opensim-workspace/opensim-gui-source/Gui/opensim/dist/installer/opensim/bin/opensim --jdkhome /usr/lib/jvm/default
 ```
+
+## On Server
+
+ cmake -B build -DOpenSim_DIR="~/opensim-core/cmake"
+ ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-ik-results
