@@ -170,43 +170,43 @@
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 		<IKMarkerTask name="Pelvis_RFemur_score">
-			<apply> true </apply>
+			<apply> false </apply>
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 		<IKMarkerTask name="Pelvis_LFemur_score">
-			<apply> true </apply>
+			<apply> false </apply>
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 		<IKMarkerTask name="RFemur_RTibia_score">
-			<apply> true </apply>
+			<apply> false </apply>
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 		<IKMarkerTask name="RFemur_RTibia_sara">
-			<apply> true </apply>
+			<apply>false </apply>
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 		<IKMarkerTask name="LFemur_LTibia_score">
-			<apply> true </apply>
+			<apply> false </apply>
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 		<IKMarkerTask name="LFemur_LTibia_sara">
-			<apply> true </apply>
+			<apply> false </apply>
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 		<IKMarkerTask name="RKnee">
-			<apply> true </apply>
+			<apply> false </apply>
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 		<IKMarkerTask name="LKnee">
-			<apply> true </apply>
+			<apply> false </apply>
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 		<IKMarkerTask name="RTibia_RFoot_score">
-			<apply> true </apply>
+			<apply> false </apply>
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 		<IKMarkerTask name="LTibia_LFoot_score">
-			<apply> true </apply>
+			<apply> false </apply>
 			<weight> 1.00000000 </weight>
 		</IKMarkerTask>
 	</objects>

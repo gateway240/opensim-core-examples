@@ -17,10 +17,10 @@
 #include <vector>
 
 const std::vector<std::pair<std::string, std::string>> config = {
-    // {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_only.osim"},
-    {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_and_markerIK_and_IMUs.osim"},
-    // {"kg_IK_Tasks_uniform.xml", "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"}
-    // {"kuopio_base_IK_Tasks_uniform.xml", "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"}
+    // {"kuopio_base_IK_Tasks_uniform.xml", "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
+    {"kg_IK_Tasks_uniform.xml", "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
+    {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_and_markerIK_and_IMUs.osim"}
+        // {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_only.osim"},
     };
 
 
@@ -104,6 +104,7 @@ void process(const std::filesystem::path &sourceDir,
     const std::filesystem::path resultsFirstParent = resultDir.parent_path();
     const std::filesystem::path resultsSecondParent = resultsFirstParent.parent_path();
 
+
     if (std::filesystem::exists(modelSourcePath)) {
         OpenSim::InverseKinematicsTool ik((resultDir / fileNameSetupInverseKinematics).string());
         // OpenSim::Model mdl(modelSourcePath.string());
@@ -114,8 +115,23 @@ void process(const std::filesystem::path &sourceDir,
         ik.set_marker_file(markerFileName);
         // ik.setMarkerDataFileName(markerFileName);
         ik.set_output_motion_file(outputMotionFileName);
-
-        ik.run();
+        
+        bool ikSuccess = false;
+        double startTime = ik.getStartTime();
+        double endTime = ik.getEndTime();
+        const double timeIncrement = 0.1;
+        // std::cout << "Start Time: " << startTime << " End Time: " << endTime << std::endl;
+        do {
+            std::cerr << "Running IK! Trying with start time: " << startTime << std::endl; 
+            try {
+                ikSuccess = ik.run();
+            } catch ( ... ) {
+                std::cerr << "IK Failed! Incrementing and trying again!" << std::endl;
+            } 
+            startTime += timeIncrement;
+            ik.setStartTime(startTime);
+        } while (!ikSuccess && startTime < endTime);
+  
     }
 
   } catch (const std::exception &e) {
