@@ -113,6 +113,7 @@ void process(const std::filesystem::path& sourceDir,
 
     if (std::filesystem::exists(modelSourcePath)) {
         OpenSim::InverseKinematicsTool ik((resultDir / fileNameSetupInverseKinematics).string());
+        ik.setName(outputFilePrefix);
         // OpenSim::Model mdl(modelSourcePath.string());
         // mdl.initSystem();
         // ik.setModel(mdl);
