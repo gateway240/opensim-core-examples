@@ -68,12 +68,20 @@ Scale Tool:
 ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models
 
 7z a -mmt=on ~/data/kuopio-gait-dataset-models-v3.zip ~/data/kuopio-gait-dataset-processed-v2-models/*
+7z a -mmt=on ~/data/kuopio-gait-dataset-models-v3-r_comf_01.zip ~/data/kuopio-gait-dataset-processed-v2-models-r_comf_01/*
 
 ```
 
 MarkerIKBulk Tool:
 ```sh
 ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-marker-ik-results
+
+7z a -mmt=on ~/data/kuopio-gait-dataset-marker-ik-results.zip ~/data/kuopio-gait-dataset-processed-v2-ik-results/*
+```
+
+IMUIKBulk Tool:
+```sh
+./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-imu-ik-results
 
 7z a -mmt=on ~/data/kuopio-gait-dataset-marker-ik-results.zip ~/data/kuopio-gait-dataset-processed-v2-ik-results/*
 ```
