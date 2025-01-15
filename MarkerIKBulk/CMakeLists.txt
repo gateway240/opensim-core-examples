@@ -17,16 +17,15 @@ find_package(OpenSim REQUIRED PATHS "${OPENSIM_INSTALL_DIR}")
 
 # Thread Pool Lib
 # ----------------------------
-include(FetchContent)
-set(FETCHCONTENT_UPDATES_DISCONNECTED OFF)
-FetchContent_Declare(
-    bshoshany_thread_pool
-    GIT_REPOSITORY https://github.com/bshoshany/thread-pool.git
-    GIT_TAG v5.0.0
-)
-FetchContent_MakeAvailable(bshoshany_thread_pool)
+set(CPM_DOWNLOAD_LOCATION ${CMAKE_BINARY_DIR}/CPM.cmake)
+if(NOT(EXISTS ${CPM_DOWNLOAD_LOCATION}))
+    file(DOWNLOAD https://github.com/cpm-cmake/CPM.cmake/releases/latest/download/CPM.cmake ${CPM_DOWNLOAD_LOCATION})
+endif()
+include(${CPM_DOWNLOAD_LOCATION})
+
+CPMAddPackage("gh:bshoshany/thread-pool@5.0.0")
 add_library(BS_thread_pool INTERFACE)
-target_include_directories(BS_thread_pool INTERFACE ${bshoshany_thread_pool_SOURCE_DIR}/include)
+target_include_directories(BS_thread_pool INTERFACE ${${CPM_LAST_PACKAGE_NAME}_SOURCE_DIR}/include)
 
 
 # Configure this project.
