@@ -9,6 +9,7 @@ set(TARGET "main" CACHE STRING "main")
 # OpenSim uses C++11 language features.
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
 
 # Find and hook up to OpenSim.
@@ -17,6 +18,9 @@ find_package(OpenSim REQUIRED PATHS "${OPENSIM_INSTALL_DIR}")
 
 # Thread Pool Lib
 # ----------------------------
+if(MSVC)
+    add_compile_options(/permissive- /Zc:__cplusplus)
+endif()
 set(CPM_DOWNLOAD_LOCATION ${CMAKE_BINARY_DIR}/CPM.cmake)
 if(NOT(EXISTS ${CPM_DOWNLOAD_LOCATION}))
     file(DOWNLOAD https://github.com/cpm-cmake/CPM.cmake/releases/latest/download/CPM.cmake ${CPM_DOWNLOAD_LOCATION})

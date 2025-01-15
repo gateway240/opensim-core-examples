@@ -74,7 +74,7 @@ Scale Tool:
 
 MarkerIKBulk Tool:
 ```sh
-./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-marker-ik-results
+./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-marker-ik-results-v2
 
 7z a -mmt=on ~/data/kuopio-gait-dataset-marker-ik-results.zip ~/data/kuopio-gait-dataset-processed-v2-ik-results/*
 ```

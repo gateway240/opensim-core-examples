@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.22)
 
 project(Opensim_Examples)
 
@@ -9,6 +9,7 @@ set(TARGET "main" CACHE STRING "main")
 # OpenSim uses C++11 language features.
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
 
 # Find and hook up to OpenSim.
@@ -17,19 +18,18 @@ find_package(OpenSim REQUIRED PATHS "${OPENSIM_INSTALL_DIR}")
 
 # Thread Pool Lib
 # ----------------------------
-include(FetchContent)
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
-FetchContent_Declare(
-    bshoshany_thread_pool
-    GIT_REPOSITORY https://github.com/bshoshany/thread-pool.git
-    GIT_TAG v5.0.0
-    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-    EXCLUDE_FROM_ALL
-    SYSTEM
-)
-FetchContent_MakeAvailable(bshoshany_thread_pool)
+if(MSVC)
+    add_compile_options(/permissive- /Zc:__cplusplus)
+endif()
+set(CPM_DOWNLOAD_LOCATION ${CMAKE_BINARY_DIR}/CPM.cmake)
+if(NOT(EXISTS ${CPM_DOWNLOAD_LOCATION}))
+    file(DOWNLOAD https://github.com/cpm-cmake/CPM.cmake/releases/latest/download/CPM.cmake ${CPM_DOWNLOAD_LOCATION})
+endif()
+include(${CPM_DOWNLOAD_LOCATION})
+
+CPMAddPackage("gh:bshoshany/thread-pool@5.0.0")
 add_library(BS_thread_pool INTERFACE)
-target_include_directories(BS_thread_pool INTERFACE ${bshoshany_thread_pool_SOURCE_DIR}/include)
+target_include_directories(BS_thread_pool INTERFACE ${${CPM_LAST_PACKAGE_NAME}_SOURCE_DIR}/include)
 
 
 # Configure this project.
