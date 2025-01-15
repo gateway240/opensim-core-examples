@@ -4,6 +4,8 @@
 #include <OpenSim/Simulation/Model/Model.h>
 #include <OpenSim/Tools/InverseKinematicsTool.h>
 
+// Thread Pool
+#include "BS_thread_pool.hpp" // BS::synced_stream, BS::thread_pool
 
 #include <algorithm> // For std::find_if
 #include <chrono>    // for std::chrono functions
@@ -13,8 +15,11 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <thread>
 #include <vector>
+
+std::ofstream log_file("task.log");
+BS::synced_stream sync_out(std::cout, log_file);
+BS::thread_pool pool;
 
 const std::vector<std::pair<std::string, std::string>> config = {
     // {"kuopio_base_IK_Tasks_uniform.xml", "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
@@ -53,11 +58,10 @@ void process(const std::filesystem::path &sourceDir,
              const std::filesystem::path &modelsDir,
              const std::filesystem::path &resultDir,
              const std::filesystem::path &file,
-             const std::pair<std::string, std::string> &config) {
-  std::cout << "---Starting Processing: " << sourceDir << " file: " << file
-            << " Model: " << config.second << std::endl;
+             const std::pair<std::string, std::string> &c) {
+  sync_out.println("---Starting Processing: ", sourceDir.string(), " file: ", file.string(), " Model: ", c.second);
   try {
-    // OpenSim::IO::SetDigitsPad(4);
+    OpenSim::IO::SetDigitsPad(4);
 
 
     const std::filesystem::path sourceTrcFile = file;
@@ -89,14 +93,15 @@ void process(const std::filesystem::path &sourceDir,
     // Find the Model
     const std::filesystem::path firstParent = sourceDir.parent_path();
 
-    const std::string fileNameIKTaskSet = config.first;
-    const std::string fileNameBaseModel = config.second;
+    const std::string fileNameIKTaskSet = c.first;
+    const std::string fileNameBaseModel = c.second;
     const std::filesystem::path modelSourcePath =
         modelsDir / firstParent.filename() / fileNameBaseModel;
     const std::string modelSourceStem = modelSourcePath.stem().string();
     // std::cout << "ModelsDir: " << modelsDir << std::endl;
     // std::cout << "First Parent: " << firstParent << " Second Parent: " << secondParent << std::endl;
-    std::cout << "Model path: " << modelSourcePath << std::endl;
+    sync_out.println("Model Path: ",modelSourcePath.string());
+    // std::cout << "Model path: " << modelSourcePath << std::endl;
     
     const std::string outputMotionFileName =
         outputBasePrefix + sep + markerFilePath.stem().string() + sep + modelSourceStem + sep + "marker_ik_output.mot";
@@ -122,11 +127,11 @@ void process(const std::filesystem::path &sourceDir,
         const double timeIncrement = 0.1;
         // std::cout << "Start Time: " << startTime << " End Time: " << endTime << std::endl;
         do {
-            std::cerr << "Running IK! Trying with start time: " << startTime << std::endl; 
+            sync_out.println("Running IK! Trying with start time: ", startTime);
             try {
                 ikSuccess = ik.run();
             } catch ( ... ) {
-                std::cerr << "IK Failed! Incrementing and trying again!" << std::endl;
+                sync_out.println("IK Failed! Incrementing and trying again!");
             } 
             startTime += timeIncrement;
             ik.setStartTime(startTime);
@@ -136,24 +141,24 @@ void process(const std::filesystem::path &sourceDir,
 
   } catch (const std::exception &e) {
     // Catching standard exceptions
-    std::cerr << "Error in processing: " << e.what() << std::endl;
+    sync_out.println("Error in processing: ", e.what());
   } catch (...) {
-    std::cout << "Error in processing Dir: " << sourceDir << std::endl;
+    sync_out.println("Error in processing Dir: ", sourceDir.string());
   }
-
-  std::cout << "-------Finished Result Dir: " << resultDir << " File: " << file.stem() << std::endl;
+  sync_out.println("-------Finished Result Dir: ", resultDir.string(), " File: ",file.stem().string());
 }
 
-void preProcessDirectory(const std::filesystem::path &dirPath,
+void processDirectory(const std::filesystem::path &dirPath,
                       const std::filesystem::path &modelsPath,
                       const std::filesystem::path &resultPath,
                       const std::pair<std::string, std::string> &c) {
 
+  // std::vector<std::thread> threads;
   // Iterate through the directory
   for (const auto &entry : std::filesystem::directory_iterator(dirPath)) {
     if (entry.is_directory()) {
       // Recursively process subdirectory
-      preProcessDirectory(entry.path(), modelsPath, resultPath, c);
+      processDirectory(entry.path(), modelsPath, resultPath, c);
     } else if (entry.is_regular_file()) {
       // Check if the file has a .mat extension
       // std::cout << entry.path().filename() << std::endl;
@@ -190,54 +195,17 @@ void preProcessDirectory(const std::filesystem::path &dirPath,
         const std::filesystem::path setupIKDestinationPath = resultDir / fileNameSetupIK;
         try {
             // Copy the file to the destination directory
-            std::filesystem::copy_file(ikTaskSetSourcePath, ikTaskSetDestinationPath, std::filesystem::copy_options::overwrite_existing);
-            std::filesystem::copy_file(setupIKSourcePath, setupIKDestinationPath, std::filesystem::copy_options::overwrite_existing);
+            std::filesystem::copy_file(ikTaskSetSourcePath, ikTaskSetDestinationPath, std::filesystem::copy_options::update_existing);
+            std::filesystem::copy_file(setupIKSourcePath, setupIKDestinationPath, std::filesystem::copy_options::update_existing);
+            pool.detach_task(
+            [dirPath, modelsPath, resultDir, path, c]
+            {
+                process(dirPath,modelsPath,resultDir,path,c);
+            });
         } catch (const std::filesystem::filesystem_error& e) {
             std::cerr << "Error copying file: " << e.what() << std::endl;
         }
       }
-    }
-  }
-  return;
-}
-
-void processDirectory(const std::filesystem::path &dirPath,
-                      const std::filesystem::path &modelsPath,
-                      const std::filesystem::path &resultPath,
-                      const std::pair<std::string, std::string> &c) {
-
-  std::vector<std::thread> threads;
-  // Iterate through the directory
-  for (const auto &entry : std::filesystem::directory_iterator(dirPath)) {
-    if (entry.is_directory()) {
-      // Recursively process subdirectory
-      processDirectory(entry.path(), modelsPath, resultPath, c);
-    } else if (entry.is_regular_file()) {
-      // Check if the file has a .mat extension
-      // std::cout << entry.path().filename() << std::endl;
-      std::filesystem::path path = entry.path();
-      // Get the filename as a string
-      std::string filename = path.filename().string();
-      // Only files that end in .trc and start with either l_ or r_
-      if (path.extension() == ".trc" && (filename.rfind("l_", 0) == 0 || filename.rfind("r_", 0) == 0)) {
-        // Create a corresponding text file
-        
-        // Get the last two parent directories
-        const std::filesystem::path firstParent = path.parent_path();
-        const std::filesystem::path secondParent = firstParent.parent_path();
-
-        const std::filesystem::path resultDir =
-            resultPath / secondParent.filename() / firstParent.filename() / "";
-
-        threads.emplace_back(process, dirPath, modelsPath, resultDir, path, c);
-
-      }
-    }
-  }
-  // Join all threads
-  for (auto &thread : threads) {
-    if (thread.joinable()) {
-      thread.join();
     }
   }
   return;
@@ -276,26 +244,17 @@ int main(int argc, char *argv[]) {
       std::cerr << "Failed to create directory: " << outputPath << std::endl;
     }
   }
+  std::cout << "Thread Pool created with " << pool.get_thread_count() << " threads!" << std::endl;
 
   for (const auto &c : config) {
-    // const std::string fileNameIKTaskSet = c.first;
-    // const std::filesystem::path ikTaskSetSourcePath(fileNameIKTaskSet);
-    // const std::filesystem::path ikTaskSetDestinationPath = outputPath /  fileNameIKTaskSet;
-
-    // const std::string fileNameSetupIK = fileNameSetupInverseKinematics;
-    // const std::filesystem::path setupIKSourcePath(fileNameSetupIK);
-    // const std::filesystem::path setupIKDestinationPath = outputPath / fileNameSetupIK;
     try {
-        // Copy the file to the destination directory
-        // std::filesystem::copy_file(ikTaskSetSourcePath, ikTaskSetDestinationPath, std::filesystem::copy_options::overwrite_existing);
-        // std::filesystem::copy_file(setupIKSourcePath, setupIKDestinationPath, std::filesystem::copy_options::overwrite_existing);
-        // Run processing if the copies didn't fail
-        preProcessDirectory(directoryPath, modelsPath, outputPath, c);
         processDirectory(directoryPath, modelsPath, outputPath, c);
     } catch (const std::filesystem::filesystem_error& e) {
         std::cerr << "Error copying file: " << e.what() << std::endl;
     }
   }
+  // Wait for all tasks to finish
+  pool.wait();
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Runtime = "
