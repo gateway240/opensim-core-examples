@@ -54,10 +54,10 @@ void rotateMarkerTable(OpenSim::TimeSeriesTableVec3 &table,
   return;
 }
 
-void process(const std::filesystem::path sourceDir,
-             const std::filesystem::path modelsDir,
-             const std::filesystem::path resultDir,
-             const std::filesystem::path file,
+void process(const std::filesystem::path& sourceDir,
+             const std::filesystem::path& modelsDir,
+             const std::filesystem::path& resultDir,
+             const std::filesystem::path& file,
              const std::pair<std::string, std::string> &c) {
   sync_out.println("---Starting Processing: ", sourceDir.string(), " file: ", file.string(), " Model: ", c.second);
   try {
@@ -103,8 +103,9 @@ void process(const std::filesystem::path sourceDir,
     sync_out.println("Model Path: ",modelSourcePath.string());
     // std::cout << "Model path: " << modelSourcePath << std::endl;
     
-    const std::string outputMotionFileName =
-        outputBasePrefix + sep + markerFilePath.stem().string() + sep + modelSourceStem + sep + "marker_ik_output.mot";
+    const std::string outputFilePrefix =
+        outputBasePrefix + sep + markerFilePath.stem().string() + sep + modelSourceStem;
+    const std::filesystem::path outputMotionFile = resultDir / (outputFilePrefix + sep + "marker_ik_output.mot");
 
     const std::filesystem::path resultsFirstParent = resultDir.parent_path();
     const std::filesystem::path resultsSecondParent = resultsFirstParent.parent_path();
@@ -117,9 +118,9 @@ void process(const std::filesystem::path sourceDir,
         // ik.setModel(mdl);
         ik.set_model_file(modelSourcePath.string());
 
-        ik.set_marker_file(markerFileName);
+        ik.set_marker_file((resultDir /markerFileName).string());
         // ik.setMarkerDataFileName(markerFileName);
-        ik.set_output_motion_file(outputMotionFileName);
+        ik.set_output_motion_file(outputMotionFile.string());
         
         bool ikSuccess = false;
         double startTime = ik.getStartTime();
@@ -136,7 +137,7 @@ void process(const std::filesystem::path sourceDir,
             startTime += timeIncrement;
             ik.setStartTime(startTime);
         } while (!ikSuccess && startTime < endTime);
-  
+        ik.print((resultDir / (outputFilePrefix + sep + "marker_ik_output.xml")).string());
     }
 
   } catch (const std::exception &e) {
@@ -148,10 +149,10 @@ void process(const std::filesystem::path sourceDir,
   sync_out.println("-------Finished Result Dir: ", resultDir.string(), " File: ",file.stem().string());
 }
 
-void processDirectory(const std::filesystem::path dirPath,
-                      const std::filesystem::path modelsPath,
-                      const std::filesystem::path resultPath,
-                      const std::pair<std::string, std::string> c) {
+void processDirectory(const std::filesystem::path& dirPath,
+                      const std::filesystem::path& modelsPath,
+                      const std::filesystem::path& resultPath,
+                      const std::pair<std::string, std::string>& c) {
 
   // std::vector<std::thread> threads;
   // Iterate through the directory
