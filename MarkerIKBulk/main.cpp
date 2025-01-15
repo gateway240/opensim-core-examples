@@ -54,10 +54,10 @@ void rotateMarkerTable(OpenSim::TimeSeriesTableVec3 &table,
   return;
 }
 
-void process(const std::filesystem::path &sourceDir,
-             const std::filesystem::path &modelsDir,
-             const std::filesystem::path &resultDir,
-             const std::filesystem::path &file,
+void process(const std::filesystem::path sourceDir,
+             const std::filesystem::path modelsDir,
+             const std::filesystem::path resultDir,
+             const std::filesystem::path file,
              const std::pair<std::string, std::string> &c) {
   sync_out.println("---Starting Processing: ", sourceDir.string(), " file: ", file.string(), " Model: ", c.second);
   try {
@@ -148,10 +148,10 @@ void process(const std::filesystem::path &sourceDir,
   sync_out.println("-------Finished Result Dir: ", resultDir.string(), " File: ",file.stem().string());
 }
 
-void processDirectory(const std::filesystem::path &dirPath,
-                      const std::filesystem::path &modelsPath,
-                      const std::filesystem::path &resultPath,
-                      const std::pair<std::string, std::string> &c) {
+void processDirectory(const std::filesystem::path dirPath,
+                      const std::filesystem::path modelsPath,
+                      const std::filesystem::path resultPath,
+                      const std::pair<std::string, std::string> c) {
 
   // std::vector<std::thread> threads;
   // Iterate through the directory
