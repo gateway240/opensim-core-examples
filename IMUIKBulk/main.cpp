@@ -2,7 +2,7 @@
 #include <OpenSim/Common/IO.h>
 #include <OpenSim/Common/TRCFileAdapter.h>
 #include <OpenSim/Simulation/Model/Model.h>
-#include <OpenSim/Tools/InverseKinematicsTool.h>
+#include <OpenSim/Tools/IMUInverseKinematicsTool.h>
 
 // Thread Pool
 #include "BS_thread_pool.hpp" // BS::synced_stream, BS::thread_pool
@@ -24,10 +24,8 @@ BS::thread_pool pool;
 const std::vector<std::pair<std::string, std::string>> config = {
     // {"kuopio_base_IK_Tasks_uniform.xml",
     // "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
-    {"kg_IK_Tasks_uniform.xml",
-     "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
-    {"kg_IK_Tasks_uniform.xml",
-     "kg_Rajagopal2016_scaled_and_markerIK_and_IMUs.osim"}
+    {"kg", "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
+    {"kg", "kg_Rajagopal2016_scaled_and_markerIK_and_IMUs.osim"}
     // {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_only.osim"},
 };
 
@@ -36,26 +34,6 @@ const std::string fileNameSetupInverseKinematics =
     "setup_InverseKinematics.xml";
 
 const std::string sep = "_";
-// Rotation from marker space to OpenSim space (y is up)
-// This is the rotation for the kuopio gait dataset
-const SimTK::Vec3 rotations(-SimTK::Pi / 2, SimTK::Pi / 2, 0);
-
-// Function to rotate a table of Vec3 elements
-void rotateMarkerTable(OpenSim::TimeSeriesTableVec3 &table,
-                       const SimTK::Rotation_<double> &rotationMatrix) {
-  const SimTK::Rotation R_XG = rotationMatrix;
-
-  int nc = int(table.getNumColumns());
-  size_t nt = table.getNumRows();
-
-  for (size_t i = 0; i < nt; ++i) {
-    auto row = table.updRowAtIndex(i);
-    for (int j = 0; j < nc; ++j) {
-      row[j] = R_XG * row[j];
-    }
-  }
-  return;
-}
 
 void process(const std::filesystem::path &sourceDir,
              const std::filesystem::path &modelsDir,
@@ -66,31 +44,6 @@ void process(const std::filesystem::path &sourceDir,
                    " file: ", file.string(), " Model: ", c.second);
   try {
     OpenSim::IO::SetDigitsPad(4);
-
-    const std::filesystem::path sourceTrcFile = file;
-
-    // ROTATE the marker table so the orientation is correct
-    OpenSim::TRCFileAdapter trcfileadapter{};
-    OpenSim::TimeSeriesTableVec3 table{sourceTrcFile.string()};
-
-    const SimTK::Rotation sensorToOpenSim = SimTK::Rotation(
-        SimTK::BodyOrSpaceType::SpaceRotationSequence, rotations[0],
-        SimTK::XAxis, rotations[1], SimTK::YAxis, rotations[2], SimTK::ZAxis);
-    rotateMarkerTable(table, sensorToOpenSim);
-
-    // Get the filename without extension
-    const std::string rotatedFilename = sourceTrcFile.stem().string() +
-                                        "_rotated" +
-                                        sourceTrcFile.extension().string();
-    const std::filesystem::path markerFilePath = resultDir / rotatedFilename;
-    // std::cout << markerFilePath.string() << std::endl;
-
-    // Write the rotated file
-    std::filesystem::path newDirectory = resultDir;
-
-    const std::string markerFileName = markerFilePath.string();
-
-    trcfileadapter.write(table, markerFileName);
 
     // Find the Model
     const std::filesystem::path firstParent = sourceDir.parent_path();
@@ -106,48 +59,38 @@ void process(const std::filesystem::path &sourceDir,
     sync_out.println("Model Path: ", modelSourcePath.string());
     // std::cout << "Model path: " << modelSourcePath << std::endl;
 
-    const std::string outputFilePrefix = outputBasePrefix + sep +
-                                         markerFilePath.stem().string() + sep +
-                                         modelSourceStem;
+    const std::string outputSuffix = "imu_ik_output";
+    const std::string outputFilePrefix =
+        outputBasePrefix + sep + file.stem().string() + sep + modelSourceStem;
     const std::filesystem::path outputMotionFile =
-        resultDir / (outputFilePrefix + sep + "marker_ik_output.mot");
+        resultDir / (outputFilePrefix + sep + outputSuffix + ".mot");
 
     const std::filesystem::path resultsFirstParent = resultDir.parent_path();
     const std::filesystem::path resultsSecondParent =
         resultsFirstParent.parent_path();
 
     if (std::filesystem::exists(modelSourcePath)) {
-      OpenSim::InverseKinematicsTool ik(
-          (resultDir / fileNameSetupInverseKinematics).string());
-      ik.setName(outputFilePrefix);
-      // OpenSim::Model mdl(modelSourcePath.string());
-      // mdl.initSystem();
-      // ik.setModel(mdl);
-      ik.set_report_marker_locations(false);
-      ik.set_model_file(modelSourcePath.string());
+      OpenSim::IMUInverseKinematicsTool imuIk;
+      imuIk.setName(outputFilePrefix);
 
-      ik.set_marker_file((resultDir / markerFileName).string());
-      // ik.setMarkerDataFileName(markerFileName);
-      ik.set_output_motion_file(outputMotionFile.string());
+      imuIk.set_accuracy(9.9999999999999995e-07);
 
-      bool ikSuccess = false;
-      double startTime = ik.getStartTime();
-      double endTime = ik.getEndTime();
-      const double timeIncrement = 0.1;
-      // std::cout << "Start Time: " << startTime << " End Time: " << endTime <<
-      // std::endl;
-      do {
-        sync_out.println("Running IK! Trying with start time: ", startTime);
-        try {
-          ikSuccess = ik.run();
-        } catch (...) {
-          sync_out.println("IK Failed! Incrementing and trying again!");
-        }
-        startTime += timeIncrement;
-        ik.setStartTime(startTime);
-      } while (!ikSuccess && startTime < endTime);
-      ik.print((resultDir / (outputFilePrefix + sep + "marker_ik_output.xml"))
-                   .string());
+      const OpenSim::Array<double> range{SimTK::Infinity, 2};
+      // Make range -Infinity to Infinity unless limited by data
+      range[0] = 4.0; 
+      imuIk.set_time_range(range);
+
+      // This is the rotation for the kuopio gait dataset
+      const SimTK::Vec3 rotations(-SimTK::Pi / 2, 0, 0);
+      imuIk.set_sensor_to_opensim_rotations(rotations);
+      imuIk.set_model_file(modelSourcePath.string());
+      imuIk.set_orientations_file(file.string());
+      imuIk.set_results_directory(resultDir);
+      imuIk.set_output_motion_file(outputMotionFile.string());
+      bool visualizeResults = false;
+      imuIk.run(visualizeResults);
+      imuIk.print((resultDir / (outputFilePrefix + sep + outputSuffix + ".xml"))
+                      .string());
     }
 
   } catch (const std::exception &e) {
@@ -160,10 +103,10 @@ void process(const std::filesystem::path &sourceDir,
                    " File: ", file.stem().string());
 }
 
-void preProcessDirectory(const std::filesystem::path &dirPath,
-                         const std::filesystem::path &modelsPath,
-                         const std::filesystem::path &resultPath,
-                         const std::pair<std::string, std::string> &c) {
+void processDirectory(const std::filesystem::path &dirPath,
+                      const std::filesystem::path &modelsPath,
+                      const std::filesystem::path &resultPath,
+                      const std::pair<std::string, std::string> &c) {
 
   // Iterate through the directory
   for (const auto &entry : std::filesystem::directory_iterator(dirPath)) {
@@ -175,10 +118,12 @@ void preProcessDirectory(const std::filesystem::path &dirPath,
       // std::cout << entry.path().filename() << std::endl;
       std::filesystem::path path = entry.path();
       // Get the filename as a string
-      std::string filename = path.filename().string();
+      std::string filename = path.stem().string();
       // Only files that end in .trc and start with either l_ or r_
-      if (path.extension() == ".trc" &&
-          (filename.rfind("l_", 0) == 0 || filename.rfind("r_", 0) == 0)) {
+      if (path.extension() == ".sto" &&
+          (filename.rfind("data_l_", 0) == 0 ||
+           filename.rfind("data_r_", 0) == 0) &&
+          filename.ends_with("_orientations")) {
         // Create a corresponding text file
 
         // Get the last two parent directories
@@ -198,23 +143,8 @@ void preProcessDirectory(const std::filesystem::path &dirPath,
                       << std::endl;
           }
         }
-        const std::string fileNameIKTaskSet = c.first;
-        const std::filesystem::path ikTaskSetSourcePath(fileNameIKTaskSet);
-        const std::filesystem::path ikTaskSetDestinationPath =
-            resultDir / fileNameIKTaskSet;
 
-        const std::string fileNameSetupIK = fileNameSetupInverseKinematics;
-        const std::filesystem::path setupIKSourcePath(fileNameSetupIK);
-        const std::filesystem::path setupIKDestinationPath =
-            resultDir / fileNameSetupIK;
         try {
-          // Copy the file to the destination directory
-          std::filesystem::copy_file(
-              ikTaskSetSourcePath, ikTaskSetDestinationPath,
-              std::filesystem::copy_options::update_existing);
-          std::filesystem::copy_file(
-              setupIKSourcePath, setupIKDestinationPath,
-              std::filesystem::copy_options::update_existing);
           pool.detach_task([dirPath, modelsPath, resultDir, path, c] {
             process(dirPath, modelsPath, resultDir, path, c);
           });

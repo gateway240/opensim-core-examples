@@ -86,8 +86,6 @@ void process(const std::filesystem::path &sourceDir,
     // std::cout << markerFilePath.string() << std::endl;
 
     // Write the rotated file
-    std::filesystem::path newDirectory = resultDir;
-
     const std::string markerFileName = markerFilePath.string();
 
     trcfileadapter.write(table, markerFileName);
