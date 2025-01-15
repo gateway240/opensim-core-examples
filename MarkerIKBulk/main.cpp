@@ -117,6 +117,7 @@ void process(const std::filesystem::path& sourceDir,
         // OpenSim::Model mdl(modelSourcePath.string());
         // mdl.initSystem();
         // ik.setModel(mdl);
+        ik.set_report_marker_locations(false);
         ik.set_model_file(modelSourcePath.string());
 
         ik.set_marker_file((resultDir /markerFileName).string());
