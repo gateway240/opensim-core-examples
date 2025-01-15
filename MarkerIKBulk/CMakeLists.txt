@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.22)
 
 project(Opensim_Examples)
 
@@ -18,14 +18,11 @@ find_package(OpenSim REQUIRED PATHS "${OPENSIM_INSTALL_DIR}")
 # Thread Pool Lib
 # ----------------------------
 include(FetchContent)
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+set(FETCHCONTENT_UPDATES_DISCONNECTED OFF)
 FetchContent_Declare(
     bshoshany_thread_pool
     GIT_REPOSITORY https://github.com/bshoshany/thread-pool.git
     GIT_TAG v5.0.0
-    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-    EXCLUDE_FROM_ALL
-    SYSTEM
 )
 FetchContent_MakeAvailable(bshoshany_thread_pool)
 add_library(BS_thread_pool INTERFACE)
