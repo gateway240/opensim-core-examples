@@ -22,7 +22,9 @@
 std::ofstream log_file("task.log");
 BS::synced_stream sync_out(std::cout, log_file);
 const int max_threads = 48;
-const int num_threads = std::thread::hardware_concurrency() > max_threads ? max_threads : std::thread::hardware_concurrency(); 
+const int num_threads = std::thread::hardware_concurrency() > max_threads
+                            ? max_threads
+                            : std::thread::hardware_concurrency();
 BS::thread_pool pool(num_threads);
 
 // All trials with no invalid trials
@@ -172,20 +174,14 @@ void processDirectory(const std::filesystem::path &dirPath,
         if (!std::filesystem::exists(newDirectory)) {
           // Create the directory
           if (std::filesystem::create_directories(newDirectory)) {
-            std::cout << "Directories created: " << newDirectory << std::endl;
+            sync_out.println("Directories created: ", newDirectory);
           } else {
-            std::cerr << "Failed to create directory: " << newDirectory
-                      << std::endl;
+            sync_out.println("Failed to create directory: ", newDirectory);
           }
         }
-
-        try {
-          pool.detach_task([dirPath, modelsPath, resultDir, path, c] {
-            process(dirPath, modelsPath, resultDir, path, c);
-          });
-        } catch (const std::filesystem::filesystem_error &e) {
-          std::cerr << "Error copying file: " << e.what() << std::endl;
-        }
+        pool.detach_task([dirPath, modelsPath, resultDir, path, c] {
+          process(dirPath, modelsPath, resultDir, path, c);
+        });
       }
     }
   }
@@ -220,30 +216,28 @@ int main(int argc, char *argv[]) {
   if (!std::filesystem::exists(outputPath)) {
     // Create the directory
     if (std::filesystem::create_directories(outputPath)) {
-      std::cout << "Directories created: " << outputPath << std::endl;
+      sync_out.println("Directories created: ", outputPath);
     } else {
-      std::cerr << "Failed to create directory: " << outputPath << std::endl;
+      sync_out.println("Failed to create directory: ", outputPath);
     }
   }
-  std::cout << "Thread Pool created with " << pool.get_thread_count()
-            << " threads!" << std::endl;
+  sync_out.println("Thread Pool num threads: ", pool.get_thread_count());
 
   for (const auto &c : config) {
     try {
       processDirectory(directoryPath, modelsPath, outputPath, c);
     } catch (const std::filesystem::filesystem_error &e) {
-      std::cerr << "Error Processing: " << e.what() << std::endl;
+      sync_out.println("Error Processing: ", e.what());
     }
   }
   // Wait for all tasks to finish
   pool.wait();
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  std::cout << "Runtime = "
-            << std::chrono::duration_cast<std::chrono::microseconds>(end -
-                                                                     begin)
-                   .count()
-            << "[µs]" << std::endl;
-  std::cout << "Finished Running without Error!" << std::endl;
+  const double runtime =
+      std::chrono::duration_cast<std::chrono::microseconds>(end - begin)
+          .count();
+  sync_out.println("Runtime = ", runtime, " [µs]");
+  sync_out.println("Finished Running without Error!");
   return 0;
 }
