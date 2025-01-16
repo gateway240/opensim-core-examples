@@ -28,13 +28,6 @@ const int64_t time_now =
 std::ofstream log_file("task-" + std::to_string(time_now) + ".log");
 BS::synced_stream sync_out(std::cout, log_file);
 
-// Threading
-const int max_threads = 64;
-const int num_threads = std::thread::hardware_concurrency() > max_threads
-                            ? max_threads
-                            : std::thread::hardware_concurrency();
-BS::thread_pool pool(num_threads);
-
 // Configuration
 typedef std::pair<OpenSim::OrientationWeightSet, std::string> ConfigType;
 
@@ -68,20 +61,14 @@ const std::string imuSuffix = "and_IMUs";
 const std::string sep = "_";
 
 void processModel(const std::filesystem::path &sourceDir,
-                  const std::filesystem::path &modelsDir,
                   const std::filesystem::path &resultDir,
                   const std::filesystem::path &file, const ConfigType &c) {
   sync_out.println("---Starting Processing: ", sourceDir.string(),
                    " file: ", file.string(), " Model: ", c.second);
   try {
-    OpenSim::IO::SetDigitsPad(4);
-
-    // Find the Model
-    const std::filesystem::path firstParent = sourceDir.parent_path();
-
     const std::string fileNameBaseModel = c.second;
     const std::filesystem::path modelSourcePath =
-        modelsDir / firstParent.filename() / fileNameBaseModel;
+        sourceDir / fileNameBaseModel;
     const std::string modelSourceStem = modelSourcePath.stem().string();
 
     sync_out.println("Model Path: ", modelSourcePath.string());
@@ -113,8 +100,9 @@ void processModel(const std::filesystem::path &sourceDir,
 
       imuPlacer.set_output_model_file(scaledOutputModelFile);
       imuPlacer.run();
+    } else {
+      sync_out.println("Model Path doesn't exist: ", modelSourcePath);
     }
-
   } catch (const std::exception &e) {
     // Catching standard exceptions
     sync_out.println("Error in processing: ", e.what());
@@ -126,17 +114,11 @@ void processModel(const std::filesystem::path &sourceDir,
 }
 
 void process(const std::filesystem::path &sourceDir,
-             const std::filesystem::path &modelsDir,
              const std::filesystem::path &resultDir,
              const std::filesystem::path &file, const ConfigType &c) {
   sync_out.println("---Starting Processing: ", sourceDir.string(),
                    " file: ", file.string(), " Model: ", c.second);
   try {
-    OpenSim::IO::SetDigitsPad(4);
-
-    // Find the Model
-    const std::filesystem::path firstParent = sourceDir.parent_path();
-
     const OpenSim::OrientationWeightSet weightSet = c.first;
     const std::string weightSetName = weightSet.getName();
     const std::filesystem::path fileNameBaseModel = c.second;
@@ -179,8 +161,9 @@ void process(const std::filesystem::path &sourceDir,
       imuIk.run(visualizeResults);
       imuIk.print((resultDir / (outputFilePrefix + sep + outputSuffix + ".xml"))
                       .string());
+    } else {
+      sync_out.println("Model Path doesn't exist: ", modelSourcePath);
     }
-
   } catch (const std::exception &e) {
     // Catching standard exceptions
     sync_out.println("Error in processing: ", e.what());
@@ -191,108 +174,70 @@ void process(const std::filesystem::path &sourceDir,
                    " File: ", file.stem().string());
 }
 
-void processModelDirectory(const std::filesystem::path &dirPath,
-                           const std::filesystem::path &modelsPath,
-                           const std::filesystem::path &resultPath,
-                           const ConfigType &c) {
-
-  // Iterate through the directory
-  for (const auto &entry : std::filesystem::directory_iterator(dirPath)) {
-    if (entry.is_directory()) {
-      // Recursively process subdirectory
-      processModelDirectory(entry.path(), modelsPath, resultPath, c);
-    } else if (entry.is_regular_file()) {
-      // Check if the file has a .mat extension
-      // std::cout << entry.path().filename() << std::endl;
-      std::filesystem::path path = entry.path();
-      // Get the filename as a string
-      std::string filename = path.stem().string();
-
-      // Get the last two parent directories
-      const std::filesystem::path firstParent = path.parent_path();
-      const std::filesystem::path secondParent = firstParent.parent_path();
-
-      const std::string participantId = secondParent.filename();
-      // Use std::find to check if the string is in the list
-      const auto it = std::find(includedParticipants.begin(),
-                                includedParticipants.end(), participantId);
-      const bool participantIncluded = it != includedParticipants.end();
-      // Only files that end in .trc and start with either l_ or r_
-      if (path.extension() == ".sto" &&
-          (filename.rfind("data_l_", 0) == 0 ||
-           filename.rfind("data_r_", 0) == 0) &&
-          filename.ends_with("_orientations") && participantIncluded) {
-        const std::filesystem::path resultDir =
-            resultPath / secondParent.filename() / firstParent.filename() / "";
-
-        std::filesystem::path newDirectory = resultDir.parent_path();
-        if (!std::filesystem::exists(newDirectory)) {
-          // Create the directory
-          if (std::filesystem::create_directories(newDirectory)) {
-            sync_out.println("Directories created: ", newDirectory);
-          } else {
-            sync_out.println("Failed to create directory: ", newDirectory);
-          }
-        }
-        pool.detach_task([dirPath, modelsPath, resultDir, path, c] {
-          processModel(dirPath, modelsPath, resultDir, path, c);
-        });
+void collectFiles(const std::filesystem::path &directory,
+                  std::vector<std::filesystem::path> &files) {
+  // Check if the path is a directory
+  if (std::filesystem::is_directory(directory)) {
+    // Iterate through the directory
+    for (const auto &entry : std::filesystem::directory_iterator(directory)) {
+      if (std::filesystem::is_directory(entry)) {
+        // Recursively call collectFiles for subdirectories
+        collectFiles(entry.path(), files);
+      } else if (std::filesystem::is_regular_file(entry)) {
+        // Add the file to the vector
+        files.push_back(entry.path());
       }
     }
   }
-  return;
 }
 
-void processDirectory(const std::filesystem::path &dirPath,
-                      const std::filesystem::path &modelsPath,
-                      const std::filesystem::path &resultPath,
-                      const ConfigType &c) {
+// Function to filter files based on specific criteria
+void filterFiles(const std::vector<std::filesystem::path> &allFiles,
+                 std::vector<std::filesystem::path> &filteredFiles,
+                 const std::vector<std::string> &includedParticipants) {
+  for (const auto &path : allFiles) {
+    std::string filename = path.stem().string();
 
-  // Iterate through the directory
-  for (const auto &entry : std::filesystem::directory_iterator(dirPath)) {
-    if (entry.is_directory()) {
-      // Recursively process subdirectory
-      processDirectory(entry.path(), modelsPath, resultPath, c);
-    } else if (entry.is_regular_file()) {
-      // Check if the file has a .mat extension
-      // std::cout << entry.path().filename() << std::endl;
-      std::filesystem::path path = entry.path();
-      // Get the filename as a string
-      std::string filename = path.stem().string();
+    // Get the last two parent directories
+    const std::filesystem::path firstParent = path.parent_path();
+    const std::filesystem::path secondParent = firstParent.parent_path();
 
-      // Get the last two parent directories
-      const std::filesystem::path firstParent = path.parent_path();
-      const std::filesystem::path secondParent = firstParent.parent_path();
+    const std::string participantId = secondParent.filename().string();
 
-      const std::string participantId = secondParent.filename();
-      // Use std::find to check if the string is in the list
-      const auto it = std::find(includedParticipants.begin(),
-                                includedParticipants.end(), participantId);
-      const bool participantIncluded = it != includedParticipants.end();
-      // Only files that end in .trc and start with either l_ or r_
-      if (path.extension() == ".sto" &&
-          (filename.rfind("data_l_", 0) == 0 ||
-           filename.rfind("data_r_", 0) == 0) &&
-          filename.ends_with("_orientations") && participantIncluded) {
-        const std::filesystem::path resultDir =
-            resultPath / secondParent.filename() / firstParent.filename() / "";
+    // Check if the participant ID is in the included list
+    const auto it = std::find(includedParticipants.begin(),
+                              includedParticipants.end(), participantId);
+    const bool participantIncluded = it != includedParticipants.end();
 
-        std::filesystem::path newDirectory = resultDir.parent_path();
-        if (!std::filesystem::exists(newDirectory)) {
-          // Create the directory
-          if (std::filesystem::create_directories(newDirectory)) {
-            sync_out.println("Directories created: ", newDirectory);
-          } else {
-            sync_out.println("Failed to create directory: ", newDirectory);
-          }
-        }
-        pool.detach_task([dirPath, modelsPath, resultDir, path, c] {
-          process(dirPath, modelsPath, resultDir, path, c);
-        });
-      }
+    // Check the file extension and naming conditions
+    if (path.extension() == ".sto" &&
+        (filename.rfind("data_l_", 0) == 0 ||
+         filename.rfind("data_r_", 0) == 0) &&
+        filename.ends_with("_orientations") && participantIncluded) {
+      // Add the file to the filtered vector if all conditions are met
+      filteredFiles.push_back(path);
     }
   }
-  return;
+}
+
+// Function to create the required directory structure
+void createResultDirectory(const std::filesystem::path &filePath,
+                           const std::filesystem::path &resultPath) {
+  const std::filesystem::path firstParent = filePath.parent_path();
+  const std::filesystem::path secondParent = firstParent.parent_path();
+
+  // Construct the result directory path
+  const std::filesystem::path resultDir =
+      resultPath / secondParent.filename() / firstParent.filename();
+
+  // Create the directory if it doesn't exist
+  if (!std::filesystem::exists(resultDir)) {
+    if (std::filesystem::create_directories(resultDir)) {
+      sync_out.println("Directories created: ", resultDir);
+    } else {
+      sync_out.println("Failed to create directory: ", resultDir);
+    }
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -328,9 +273,36 @@ int main(int argc, char *argv[]) {
       sync_out.println("Failed to create directory: ", outputPath);
     }
   }
+
+  // Threading
+  const int max_threads = 64;
+  const int num_threads = std::thread::hardware_concurrency() > max_threads
+                              ? max_threads
+                              : std::thread::hardware_concurrency();
+  BS::thread_pool pool(num_threads);
   sync_out.println("Thread Pool num threads: ", pool.get_thread_count());
+  BS::thread_pool maxSizePool;
+  sync_out.println("Max Size Thread Pool num threads: ",
+                   maxSizePool.get_thread_count());
+
+  // Start the recursive file collection
+  std::vector<std::filesystem::path> allFiles;
+  collectFiles(directoryPath, allFiles);
+
+  // Filter the collected files based on the criteria
+  std::vector<std::filesystem::path> filteredFiles;
+  filterFiles(allFiles, filteredFiles, includedParticipants);
+
+  // Create directories for each filtered file
+  for (const auto &file : filteredFiles) {
+    createResultDirectory(file, outputPath);
+  }
+
+  // Create configuration for running IK
+  OpenSim::IO::SetDigitsPad(4);
 
   std::vector<ConfigType> config;
+
   // Create every permutation of OrientationWeightSet and base model
   std::for_each(orientationWeightSets.begin(), orientationWeightSets.end(),
                 [&](const OpenSim::OrientationWeightSet &weightSet) {
@@ -340,14 +312,29 @@ int main(int argc, char *argv[]) {
                                    return std::make_pair(weightSet, model);
                                  });
                 });
-  for (const auto &c : config) {
-    processModelDirectory(directoryPath, modelsPath, outputPath, c);
+
+  // Generate subject and trial specific models
+  for (const auto &file : filteredFiles) {
+    for (const auto &c : config) {
+      maxSizePool.detach_task([modelsPath, outputPath, file, c] {
+        // Find the Model
+        const std::filesystem::path firstParent = file.parent_path();
+        const std::filesystem::path secondParent = firstParent.parent_path();
+        const std::filesystem::path modelPath = modelsPath / secondParent.filename();
+        processModel(modelPath, outputPath, file, c);
+      });
+    }
   }
   // Wait for all tasks to finish
-  pool.wait();
+  maxSizePool.wait();
 
-  for (const auto &c : config) {
-    processDirectory(directoryPath, modelsPath, outputPath, c);
+  // Run IK on all permutations
+  for (const auto &file : filteredFiles) {
+    for (const auto &c : config) {
+      pool.detach_task([directoryPath, outputPath, file, c] {
+        process(directoryPath, outputPath, file, c);
+      });
+    }
   }
   // Wait for all tasks to finish
   pool.wait();
