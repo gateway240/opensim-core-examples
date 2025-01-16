@@ -2,6 +2,7 @@
 #include <OpenSim/Common/IO.h>
 #include <OpenSim/Common/TRCFileAdapter.h>
 #include <OpenSim/Simulation/Model/Model.h>
+#include <OpenSim/Simulation/OpenSense/IMUPlacer.h>
 #include <OpenSim/Tools/IMUInverseKinematicsTool.h>
 
 // Thread Pool
@@ -21,17 +22,20 @@ std::ofstream log_file("task.log");
 BS::synced_stream sync_out(std::cout, log_file);
 BS::thread_pool pool;
 
+// All trials with no invalid trials
+const std::vector<std::string> includedParticipants = {
+    "08", "09", "12", "17", "19", "21", "24",
+    "28", "31", "34", "36", "38", "40", "41"};
+
 const std::vector<std::pair<std::string, std::string>> config = {
     // {"kuopio_base_IK_Tasks_uniform.xml",
     // "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
-    {"kg", "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
-    {"kg", "kg_Rajagopal2016_scaled_and_markerIK_and_IMUs.osim"}
+    {"kg", "kg_gait2392_thelen2003muscle_scaled_only.osim"},
+    {"kg", "kg_Rajagopal2016_scaled_only.osim"}
     // {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_only.osim"},
 };
 
 const std::string outputBasePrefix = "kg_result";
-const std::string fileNameSetupInverseKinematics =
-    "setup_InverseKinematics.xml";
 
 const std::string sep = "_";
 
@@ -70,6 +74,30 @@ void process(const std::filesystem::path &sourceDir,
         resultsFirstParent.parent_path();
 
     if (std::filesystem::exists(modelSourcePath)) {
+
+      // Fix bug for set_model_file
+      OpenSim::IMUPlacer imuPlacer;
+      imuPlacer.set_base_imu_label("pelvis_imu");
+      imuPlacer.set_base_heading_axis("-z");
+      // 90 0 90
+      // imuPlacer.set_sensor_to_opensim_rotations(
+      //     SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi, 0));
+      // Known working
+      imuPlacer.set_sensor_to_opensim_rotations(
+          SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi / 2, 0));
+      imuPlacer.set_orientation_file_for_calibration(file.string());
+
+      // Scaled Output Model
+      imuPlacer.set_model_file(modelSourcePath.string());
+
+      const std::string scaledOutputModelFile =
+          resultDir / (outputFilePrefix + sep + "and_IMUs" +
+                       modelSourcePath.extension().string());
+      sync_out.println("Scaled Output Model File: ", scaledOutputModelFile);
+
+      imuPlacer.set_output_model_file(scaledOutputModelFile);
+      imuPlacer.run();
+
       OpenSim::IMUInverseKinematicsTool imuIk;
       imuIk.setName(outputFilePrefix);
 
@@ -77,13 +105,13 @@ void process(const std::filesystem::path &sourceDir,
 
       const OpenSim::Array<double> range{SimTK::Infinity, 2};
       // Make range -Infinity to Infinity unless limited by data
-      range[0] = 4.0; 
+      range[0] = 4.0;
       imuIk.set_time_range(range);
 
       // This is the rotation for the kuopio gait dataset
       const SimTK::Vec3 rotations(-SimTK::Pi / 2, 0, 0);
       imuIk.set_sensor_to_opensim_rotations(rotations);
-      imuIk.set_model_file(modelSourcePath.string());
+      imuIk.set_model_file(scaledOutputModelFile);
       imuIk.set_orientations_file(file.string());
       imuIk.set_results_directory(resultDir);
       imuIk.set_output_motion_file(outputMotionFile.string());
@@ -119,17 +147,21 @@ void processDirectory(const std::filesystem::path &dirPath,
       std::filesystem::path path = entry.path();
       // Get the filename as a string
       std::string filename = path.stem().string();
+
+      // Get the last two parent directories
+      const std::filesystem::path firstParent = path.parent_path();
+      const std::filesystem::path secondParent = firstParent.parent_path();
+
+      const std::string participantId = secondParent.filename();
+      // Use std::find to check if the string is in the list
+      const auto it = std::find(includedParticipants.begin(),
+                                includedParticipants.end(), participantId);
+      const bool participantIncluded = it != includedParticipants.end();
       // Only files that end in .trc and start with either l_ or r_
       if (path.extension() == ".sto" &&
           (filename.rfind("data_l_", 0) == 0 ||
            filename.rfind("data_r_", 0) == 0) &&
-          filename.ends_with("_orientations")) {
-        // Create a corresponding text file
-
-        // Get the last two parent directories
-        const std::filesystem::path firstParent = path.parent_path();
-        const std::filesystem::path secondParent = firstParent.parent_path();
-
+          filename.ends_with("_orientations") && participantIncluded) {
         const std::filesystem::path resultDir =
             resultPath / secondParent.filename() / firstParent.filename() / "";
 

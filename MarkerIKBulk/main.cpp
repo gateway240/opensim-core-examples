@@ -21,6 +21,11 @@ std::ofstream log_file("task.log");
 BS::synced_stream sync_out(std::cout, log_file);
 BS::thread_pool pool;
 
+// All trials with no invalid trials
+const std::vector<std::string> includedParticipants = {
+    "08", "09", "12", "17", "19", "21", "24",
+    "28", "31", "34", "36", "38", "40", "41"};
+
 const std::vector<std::pair<std::string, std::string>> config = {
     // {"kuopio_base_IK_Tasks_uniform.xml",
     // "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
@@ -174,15 +179,20 @@ void processDirectory(const std::filesystem::path &dirPath,
       std::filesystem::path path = entry.path();
       // Get the filename as a string
       std::string filename = path.filename().string();
+
+      // Get the last two parent directories
+      const std::filesystem::path firstParent = path.parent_path();
+      const std::filesystem::path secondParent = firstParent.parent_path();
+
+      const std::string participantId = secondParent.filename();
+      // Use std::find to check if the string is in the list
+      const auto it = std::find(includedParticipants.begin(),
+                                includedParticipants.end(), participantId);
+      const bool participantIncluded = it != includedParticipants.end();
       // Only files that end in .trc and start with either l_ or r_
       if (path.extension() == ".trc" &&
-          (filename.rfind("l_", 0) == 0 || filename.rfind("r_", 0) == 0)) {
-        // Create a corresponding text file
-
-        // Get the last two parent directories
-        const std::filesystem::path firstParent = path.parent_path();
-        const std::filesystem::path secondParent = firstParent.parent_path();
-
+          (filename.rfind("l_", 0) == 0 || filename.rfind("r_", 0) == 0) &&
+          participantIncluded) {
         const std::filesystem::path resultDir =
             resultPath / secondParent.filename() / firstParent.filename() / "";
 
