@@ -14,41 +14,63 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <iterator> // For std::back_inserter
 #include <memory>
 #include <string>
 #include <thread>
 #include <vector>
 
-std::ofstream log_file("task.log");
+// Logging output
+const int64_t time_now =
+    std::chrono::duration_cast<std::chrono::seconds>(
+        std::chrono::system_clock::now().time_since_epoch())
+        .count();
+std::ofstream log_file("task-" + std::to_string(time_now) + ".log");
 BS::synced_stream sync_out(std::cout, log_file);
-const int max_threads = 48;
+
+// Threading
+const int max_threads = 64;
 const int num_threads = std::thread::hardware_concurrency() > max_threads
                             ? max_threads
                             : std::thread::hardware_concurrency();
 BS::thread_pool pool(num_threads);
+
+// Configuration
+typedef std::pair<OpenSim::OrientationWeightSet, std::string> ConfigType;
+
+const std::vector<OpenSim::OrientationWeightSet> orientationWeightSets = {
+    OpenSim::OrientationWeightSet("setup_OrientationWeightSet_uniform.xml"),
+    OpenSim::OrientationWeightSet(
+        "setup_OrientationWeightSet_pelvis_tibia_calcn.xml"),
+    OpenSim::OrientationWeightSet(
+        "setup_OrientationWeightSet_pelvis_tibia.xml"),
+    OpenSim::OrientationWeightSet(
+        "setup_OrientationWeightSet_pelvis_calcn.xml"),
+    OpenSim::OrientationWeightSet("setup_OrientationWeightSet_pelvis.xml"),
+    OpenSim::OrientationWeightSet(
+        "setup_OrientationWeightSet_tibia_calcn.xml")};
+
+const std::vector<std::string> baseModels = {
+    "kg_gait2392_thelen2003muscle_scaled_only.osim",
+    "kg_Rajagopal2016_scaled_only.osim"};
+
+// Simple test case
+// const std::vector<std::string> includedParticipants = {"40"};
 
 // All trials with no invalid trials
 const std::vector<std::string> includedParticipants = {
     "08", "09", "12", "17", "19", "21", "24",
     "28", "31", "34", "36", "38", "40", "41"};
 
-const std::vector<std::pair<std::string, std::string>> config = {
-    // {"kuopio_base_IK_Tasks_uniform.xml",
-    // "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
-    {"kg", "kg_gait2392_thelen2003muscle_scaled_only.osim"},
-    {"kg", "kg_Rajagopal2016_scaled_only.osim"}
-    // {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_only.osim"},
-};
-
-const std::string outputBasePrefix = "kg_result";
+const std::string outputBasePrefix = "kg";
+const std::string imuSuffix = "and_IMUs";
 
 const std::string sep = "_";
 
-void process(const std::filesystem::path &sourceDir,
-             const std::filesystem::path &modelsDir,
-             const std::filesystem::path &resultDir,
-             const std::filesystem::path &file,
-             const std::pair<std::string, std::string> &c) {
+void processModel(const std::filesystem::path &sourceDir,
+                  const std::filesystem::path &modelsDir,
+                  const std::filesystem::path &resultDir,
+                  const std::filesystem::path &file, const ConfigType &c) {
   sync_out.println("---Starting Processing: ", sourceDir.string(),
                    " file: ", file.string(), " Model: ", c.second);
   try {
@@ -57,26 +79,15 @@ void process(const std::filesystem::path &sourceDir,
     // Find the Model
     const std::filesystem::path firstParent = sourceDir.parent_path();
 
-    const std::string fileNameIKTaskSet = c.first;
     const std::string fileNameBaseModel = c.second;
     const std::filesystem::path modelSourcePath =
         modelsDir / firstParent.filename() / fileNameBaseModel;
     const std::string modelSourceStem = modelSourcePath.stem().string();
-    // std::cout << "ModelsDir: " << modelsDir << std::endl;
-    // std::cout << "First Parent: " << firstParent << " Second Parent: " <<
-    // secondParent << std::endl;
-    sync_out.println("Model Path: ", modelSourcePath.string());
-    // std::cout << "Model path: " << modelSourcePath << std::endl;
 
-    const std::string outputSuffix = "imu_ik_output";
+    sync_out.println("Model Path: ", modelSourcePath.string());
+
     const std::string outputFilePrefix =
         outputBasePrefix + sep + file.stem().string() + sep + modelSourceStem;
-    const std::filesystem::path outputMotionFile =
-        resultDir / (outputFilePrefix + sep + outputSuffix + ".mot");
-
-    const std::filesystem::path resultsFirstParent = resultDir.parent_path();
-    const std::filesystem::path resultsSecondParent =
-        resultsFirstParent.parent_path();
 
     if (std::filesystem::exists(modelSourcePath)) {
 
@@ -96,13 +107,56 @@ void process(const std::filesystem::path &sourceDir,
       imuPlacer.set_model_file(modelSourcePath.string());
 
       const std::string scaledOutputModelFile =
-          resultDir / (outputFilePrefix + sep + "and_IMUs" +
+          resultDir / (outputFilePrefix + sep + imuSuffix +
                        modelSourcePath.extension().string());
       sync_out.println("Scaled Output Model File: ", scaledOutputModelFile);
 
       imuPlacer.set_output_model_file(scaledOutputModelFile);
       imuPlacer.run();
+    }
 
+  } catch (const std::exception &e) {
+    // Catching standard exceptions
+    sync_out.println("Error in processing: ", e.what());
+  } catch (...) {
+    sync_out.println("Error in processing Dir: ", sourceDir.string());
+  }
+  sync_out.println("-------Finished Result Dir: ", resultDir.string(),
+                   " File: ", file.stem().string());
+}
+
+void process(const std::filesystem::path &sourceDir,
+             const std::filesystem::path &modelsDir,
+             const std::filesystem::path &resultDir,
+             const std::filesystem::path &file, const ConfigType &c) {
+  sync_out.println("---Starting Processing: ", sourceDir.string(),
+                   " file: ", file.string(), " Model: ", c.second);
+  try {
+    OpenSim::IO::SetDigitsPad(4);
+
+    // Find the Model
+    const std::filesystem::path firstParent = sourceDir.parent_path();
+
+    const OpenSim::OrientationWeightSet weightSet = c.first;
+    const std::string weightSetName = weightSet.getName();
+    const std::filesystem::path fileNameBaseModel = c.second;
+    const std::string modelFilePrefix =
+        outputBasePrefix + sep + file.stem().string() + sep +
+        fileNameBaseModel.stem().string() + sep + imuSuffix;
+    const std::string outputFilePrefix = modelFilePrefix + sep + weightSetName;
+    const std::filesystem::path modelSourcePath =
+        resultDir / (modelFilePrefix + fileNameBaseModel.extension().string());
+    const std::string modelSourceStem = modelSourcePath.stem().string();
+
+    sync_out.println("Model Path: ", modelSourcePath.string(),
+                     " Weight Set Name: ", weightSetName);
+
+    const std::string outputSuffix = "imu_ik_output";
+
+    const std::filesystem::path outputMotionFile =
+        resultDir / (outputFilePrefix + sep + outputSuffix + ".mot");
+
+    if (std::filesystem::exists(modelSourcePath)) {
       OpenSim::IMUInverseKinematicsTool imuIk;
       imuIk.setName(outputFilePrefix);
 
@@ -116,10 +170,11 @@ void process(const std::filesystem::path &sourceDir,
       // This is the rotation for the kuopio gait dataset
       const SimTK::Vec3 rotations(-SimTK::Pi / 2, 0, 0);
       imuIk.set_sensor_to_opensim_rotations(rotations);
-      imuIk.set_model_file(scaledOutputModelFile);
+      imuIk.set_model_file(modelSourcePath.string());
       imuIk.set_orientations_file(file.string());
       imuIk.set_results_directory(resultDir);
       imuIk.set_output_motion_file(outputMotionFile.string());
+      imuIk.set_orientation_weights(weightSet);
       bool visualizeResults = false;
       imuIk.run(visualizeResults);
       imuIk.print((resultDir / (outputFilePrefix + sep + outputSuffix + ".xml"))
@@ -136,10 +191,62 @@ void process(const std::filesystem::path &sourceDir,
                    " File: ", file.stem().string());
 }
 
+void processModelDirectory(const std::filesystem::path &dirPath,
+                           const std::filesystem::path &modelsPath,
+                           const std::filesystem::path &resultPath,
+                           const ConfigType &c) {
+
+  // Iterate through the directory
+  for (const auto &entry : std::filesystem::directory_iterator(dirPath)) {
+    if (entry.is_directory()) {
+      // Recursively process subdirectory
+      processModelDirectory(entry.path(), modelsPath, resultPath, c);
+    } else if (entry.is_regular_file()) {
+      // Check if the file has a .mat extension
+      // std::cout << entry.path().filename() << std::endl;
+      std::filesystem::path path = entry.path();
+      // Get the filename as a string
+      std::string filename = path.stem().string();
+
+      // Get the last two parent directories
+      const std::filesystem::path firstParent = path.parent_path();
+      const std::filesystem::path secondParent = firstParent.parent_path();
+
+      const std::string participantId = secondParent.filename();
+      // Use std::find to check if the string is in the list
+      const auto it = std::find(includedParticipants.begin(),
+                                includedParticipants.end(), participantId);
+      const bool participantIncluded = it != includedParticipants.end();
+      // Only files that end in .trc and start with either l_ or r_
+      if (path.extension() == ".sto" &&
+          (filename.rfind("data_l_", 0) == 0 ||
+           filename.rfind("data_r_", 0) == 0) &&
+          filename.ends_with("_orientations") && participantIncluded) {
+        const std::filesystem::path resultDir =
+            resultPath / secondParent.filename() / firstParent.filename() / "";
+
+        std::filesystem::path newDirectory = resultDir.parent_path();
+        if (!std::filesystem::exists(newDirectory)) {
+          // Create the directory
+          if (std::filesystem::create_directories(newDirectory)) {
+            sync_out.println("Directories created: ", newDirectory);
+          } else {
+            sync_out.println("Failed to create directory: ", newDirectory);
+          }
+        }
+        pool.detach_task([dirPath, modelsPath, resultDir, path, c] {
+          processModel(dirPath, modelsPath, resultDir, path, c);
+        });
+      }
+    }
+  }
+  return;
+}
+
 void processDirectory(const std::filesystem::path &dirPath,
                       const std::filesystem::path &modelsPath,
                       const std::filesystem::path &resultPath,
-                      const std::pair<std::string, std::string> &c) {
+                      const ConfigType &c) {
 
   // Iterate through the directory
   for (const auto &entry : std::filesystem::directory_iterator(dirPath)) {
@@ -223,12 +330,24 @@ int main(int argc, char *argv[]) {
   }
   sync_out.println("Thread Pool num threads: ", pool.get_thread_count());
 
+  std::vector<ConfigType> config;
+  // Create every permutation of OrientationWeightSet and base model
+  std::for_each(orientationWeightSets.begin(), orientationWeightSets.end(),
+                [&](const OpenSim::OrientationWeightSet &weightSet) {
+                  std::transform(baseModels.begin(), baseModels.end(),
+                                 std::back_inserter(config),
+                                 [&](const std::string &model) {
+                                   return std::make_pair(weightSet, model);
+                                 });
+                });
   for (const auto &c : config) {
-    try {
-      processDirectory(directoryPath, modelsPath, outputPath, c);
-    } catch (const std::filesystem::filesystem_error &e) {
-      sync_out.println("Error Processing: ", e.what());
-    }
+    processModelDirectory(directoryPath, modelsPath, outputPath, c);
+  }
+  // Wait for all tasks to finish
+  pool.wait();
+
+  for (const auto &c : config) {
+    processDirectory(directoryPath, modelsPath, outputPath, c);
   }
   // Wait for all tasks to finish
   pool.wait();
