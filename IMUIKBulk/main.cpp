@@ -16,11 +16,14 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <thread>
 #include <vector>
 
 std::ofstream log_file("task.log");
 BS::synced_stream sync_out(std::cout, log_file);
-BS::thread_pool pool;
+const int max_threads = 48;
+const int num_threads = std::thread::hardware_concurrency() > max_threads ? max_threads : std::thread::hardware_concurrency(); 
+BS::thread_pool pool(num_threads);
 
 // All trials with no invalid trials
 const std::vector<std::string> includedParticipants = {

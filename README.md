@@ -93,4 +93,4 @@ IMUIKBulk Tool:
 ## On Server
 
  cmake -B build -DOpenSim_DIR="~/opensim-core/cmake"
- ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-ik-results
+ ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-imu-ik-results
