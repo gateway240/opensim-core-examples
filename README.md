@@ -79,7 +79,8 @@ MarkerIKBulk Tool:
 7z a -mmt=on ~/data/kuopio-gait-dataset-marker-ik-results.zip ~/data/kuopio-gait-dataset-processed-v2-ik-results/*
 ```
 
-IMUIKBulk Tool:
+IMUIKBulk and IMUPlacerBulk Tool:
+Run IMUPlacerBulk first and then IMUIKBulk with same command
 ```sh
 ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-imu-ik-results-v2
 
@@ -93,4 +94,6 @@ IMUIKBulk Tool:
 ## On Server
 
  cmake -B build -DOpenSim_DIR="~/opensim-core/cmake"
+
+ IMUIKBulk and IMUPlacerBulk:
  ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-imu-ik-results

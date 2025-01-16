@@ -60,75 +60,17 @@ const std::string imuSuffix = "and_IMUs";
 
 const std::string sep = "_";
 
-void processModel(const std::filesystem::path &sourceDir,
-                  const std::filesystem::path &resultDir,
-                  const std::filesystem::path &file, const ConfigType &c) {
-  sync_out.println("---Starting Processing: ", sourceDir.string(),
-                   " file: ", file.string(), " Model: ", c.second);
-  try {
-    const std::string fileNameBaseModel = c.second;
-    const std::filesystem::path modelSourcePath =
-        sourceDir / fileNameBaseModel;
-    const std::string modelSourceStem = modelSourcePath.stem().string();
-
-    sync_out.println("Model Path: ", modelSourcePath.string());
-
-    const std::string outputFilePrefix =
-        outputBasePrefix + sep + file.stem().string() + sep + modelSourceStem;
-
-    if (std::filesystem::exists(modelSourcePath)) {
-
-      // Fix bug for set_model_file
-      OpenSim::IMUPlacer imuPlacer;
-      imuPlacer.set_base_imu_label("pelvis_imu");
-      imuPlacer.set_base_heading_axis("-z");
-      // 90 0 90
-      // imuPlacer.set_sensor_to_opensim_rotations(
-      //     SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi, 0));
-      // Known working
-      imuPlacer.set_sensor_to_opensim_rotations(
-          SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi / 2, 0));
-      imuPlacer.set_orientation_file_for_calibration(file.string());
-
-      // Scaled Output Model
-      imuPlacer.set_model_file(modelSourcePath.string());
-
-      const std::string scaledOutputModelFile =
-          resultDir / (outputFilePrefix + sep + imuSuffix +
-                       modelSourcePath.extension().string());
-      sync_out.println("Scaled Output Model File: ", scaledOutputModelFile);
-
-      imuPlacer.set_output_model_file(scaledOutputModelFile);
-      imuPlacer.run();
-    } else {
-      sync_out.println("Model Path doesn't exist: ", modelSourcePath);
-    }
-  } catch (const std::exception &e) {
-    // Catching standard exceptions
-    sync_out.println("Error in processing: ", e.what());
-  } catch (...) {
-    sync_out.println("Error in processing Dir: ", sourceDir.string());
-  }
-  sync_out.println("-------Finished Result Dir: ", resultDir.string(),
-                   " File: ", file.stem().string());
-}
-
-void process(const std::filesystem::path &sourceDir,
-             const std::filesystem::path &resultDir,
-             const std::filesystem::path &file, const ConfigType &c) {
-  sync_out.println("---Starting Processing: ", sourceDir.string(),
-                   " file: ", file.string(), " Model: ", c.second);
+void process(const std::filesystem::path &file,
+             const std::filesystem::path &resultDir, const ConfigType &c) {
+  sync_out.println("---Starting IK Processing: ", file.string());
   try {
     const OpenSim::OrientationWeightSet weightSet = c.first;
     const std::string weightSetName = weightSet.getName();
-    const std::filesystem::path fileNameBaseModel = c.second;
-    const std::string modelFilePrefix =
-        outputBasePrefix + sep + file.stem().string() + sep +
-        fileNameBaseModel.stem().string() + sep + imuSuffix;
-    const std::string outputFilePrefix = modelFilePrefix + sep + weightSetName;
-    const std::filesystem::path modelSourcePath =
-        resultDir / (modelFilePrefix + fileNameBaseModel.extension().string());
+
+    const std::filesystem::path modelSourcePath = c.second;
     const std::string modelSourceStem = modelSourcePath.stem().string();
+
+    const std::string outputFilePrefix = modelSourceStem + sep + weightSetName;
 
     sync_out.println("Model Path: ", modelSourcePath.string(),
                      " Weight Set Name: ", weightSetName);
@@ -168,9 +110,9 @@ void process(const std::filesystem::path &sourceDir,
     // Catching standard exceptions
     sync_out.println("Error in processing: ", e.what());
   } catch (...) {
-    sync_out.println("Error in processing Dir: ", sourceDir.string());
+    sync_out.println("Error in processing File: ", file.string());
   }
-  sync_out.println("-------Finished Result Dir: ", resultDir.string(),
+  sync_out.println("-------Finished IK Result Dir: ", resultDir.string(),
                    " File: ", file.stem().string());
 }
 
@@ -281,9 +223,6 @@ int main(int argc, char *argv[]) {
                               : std::thread::hardware_concurrency();
   BS::thread_pool pool(num_threads);
   sync_out.println("Thread Pool num threads: ", pool.get_thread_count());
-  BS::thread_pool maxSizePool;
-  sync_out.println("Max Size Thread Pool num threads: ",
-                   maxSizePool.get_thread_count());
 
   // Start the recursive file collection
   std::vector<std::filesystem::path> allFiles;
@@ -313,26 +252,24 @@ int main(int argc, char *argv[]) {
                                  });
                 });
 
-  // Generate subject and trial specific models
-  for (const auto &file : filteredFiles) {
-    for (const auto &c : config) {
-      maxSizePool.detach_task([modelsPath, outputPath, file, c] {
-        // Find the Model
-        const std::filesystem::path firstParent = file.parent_path();
-        const std::filesystem::path secondParent = firstParent.parent_path();
-        const std::filesystem::path modelPath = modelsPath / secondParent.filename();
-        processModel(modelPath, outputPath, file, c);
-      });
-    }
-  }
-  // Wait for all tasks to finish
-  maxSizePool.wait();
-
   // Run IK on all permutations
   for (const auto &file : filteredFiles) {
     for (const auto &c : config) {
-      pool.detach_task([directoryPath, outputPath, file, c] {
-        process(directoryPath, outputPath, file, c);
+      // Find the Model
+      const std::filesystem::path firstParent = file.parent_path();
+      const std::filesystem::path secondParent = firstParent.parent_path();
+      const std::filesystem::path resultDir =
+          outputPath / secondParent.filename() / firstParent.filename() / "";
+      const std::filesystem::path fileNameBaseModel = c.second;
+      const std::string modelFilePrefix =
+          outputBasePrefix + sep + file.stem().string() + sep +
+          fileNameBaseModel.stem().string() + sep + imuSuffix;
+      const std::filesystem::path modelSourcePath =
+          resultDir /
+          (modelFilePrefix + fileNameBaseModel.extension().string());
+      const ConfigType newConfig = {c.first, (modelSourcePath).string()};
+      pool.detach_task([file, resultDir, newConfig] {
+        process(file, resultDir, newConfig);
       });
     }
   }
