@@ -39,6 +39,9 @@ file(GLOB SOURCE_FILES *.h *.cpp)
 add_executable(${TARGET} ${SOURCE_FILES})
 
 target_link_libraries(${TARGET} ${OpenSim_LIBRARIES}  BS_thread_pool)
+# This as a ticklish error that will cause things to fail when loading a model
+# See https://github.com/opensim-org/opensim-core/issues/2911
+target_link_options(${TARGET} PRIVATE "-Wl,--no-as-needed")
 
 # This block symlinks the data files from data additional files into the running directory
 set(DATA_DIR "${CMAKE_SOURCE_DIR}/data")
