@@ -38,7 +38,7 @@ file(GLOB SOURCE_FILES *.h *.cpp)
 
 add_executable(${TARGET} ${SOURCE_FILES})
 
-target_link_libraries(${TARGET} PRIVATE ${OpenSim_LIBRARIES}  BS_thread_pool)
+target_link_libraries(${TARGET} ${OpenSim_LIBRARIES}  BS_thread_pool)
 
 # This block symlinks the data files from data additional files into the running directory
 set(DATA_DIR "${CMAKE_SOURCE_DIR}/data")
