@@ -40,7 +40,8 @@ int main()
     OpenSim::Model model = OpenSim::Model(model_name);
     model.initSystem();
 
-    std::string coordinates_file_name = "ik_l_comf_01-000_orientations-unif.mot";
+    std::string coordinates_file_name = "ik_l_comf_01-000_orientations.mot";
+    // std::string coordinates_file_name = "ik_l_comf_01-000_orientations-unif.mot";
      // Create the coordinates table (in radians).
     auto tableProcessor =
             OpenSim::TableProcessor(coordinates_file_name) |
@@ -48,7 +49,8 @@ int main()
             OpenSim::TabOpUseAbsoluteStateNames();
     auto coordinatesRadians = tableProcessor.processAndConvertToRadians(model);
 
-    std::string output_coordinates_name = "ik_l_comf_01-000_coordinates_radians-unif.sto";
+    // std::string output_coordinates_name = "ik_l_comf_01-000_coordinates_radians-unif.sto";
+    std::string output_coordinates_name = "ik_l_comf_01-000_coordinates_radians-test.sto";
     OpenSim::STOFileAdapter::write(coordinatesRadians, output_coordinates_name);
    
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
