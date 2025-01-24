@@ -1,6 +1,6 @@
 // INCLUDES
 #include <OpenSim/Common/IO.h>
-#include <OpenSim/Common/TRCFileAdapter.h>
+#include <OpenSim/Common/STOFileAdapter.h>
 #include <OpenSim/Simulation/Model/Model.h>
 #include <OpenSim/Simulation/OpenSense/IMUPlacer.h>
 #include <OpenSim/Tools/IMUInverseKinematicsTool.h>
@@ -49,7 +49,7 @@ const std::string imuSuffix = "and_IMUs";
 const std::string sep = "_";
 
 void process(const std::filesystem::path &file,
-                  const std::filesystem::path &resultDir, const ConfigType &c) {
+             const std::filesystem::path &resultDir, const ConfigType &c) {
   sync_out.println("---Starting Model Processing: ", file.string());
   try {
     const std::filesystem::path modelSourcePath = c.second;
@@ -72,18 +72,59 @@ void process(const std::filesystem::path &file,
       // Known working
       imuPlacer.set_sensor_to_opensim_rotations(
           SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi / 2, 0));
+
       imuPlacer.set_orientation_file_for_calibration(file.string());
 
-      // Scaled Output Model
       imuPlacer.set_model_file(modelSourcePath.string());
 
+      const std::string scaledOutputModelFilePrefix =
+          outputFilePrefix + sep + imuSuffix;
       const std::string scaledOutputModelFile =
-          resultDir / (outputFilePrefix + sep + imuSuffix +
-                       modelSourcePath.extension().string());
+          resultDir /
+          (scaledOutputModelFilePrefix + modelSourcePath.extension().string());
       sync_out.println("Scaled Output Model File: ", scaledOutputModelFile);
 
       imuPlacer.set_output_model_file(scaledOutputModelFile);
       imuPlacer.run();
+
+      // Fix bug for set_model_file
+      OpenSim::IMUPlacer imuPlacer2;
+      imuPlacer2.set_base_imu_label("pelvis_imu");
+      imuPlacer2.set_base_heading_axis("-z");
+      // 90 0 90
+      // imuPlacer2.set_sensor_to_opensim_rotations(
+      //     SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi, 0));
+      // Known working
+      imuPlacer2.set_sensor_to_opensim_rotations(
+          SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi / 2, 0));
+
+      // imuPlacer2.set_orientation_file_for_calibration(file.string());
+
+      imuPlacer2.set_model_file(modelSourcePath.string());
+
+      // Now Run with removed IMUs
+      const std::string imu_removed_suffix = "femur_IMUs_removed";
+      const std::string orientationRemovedIMUsFile =
+          resultDir /
+          (file.stem().string() + sep + imu_removed_suffix + file.extension().string());
+      OpenSim::TimeSeriesTable_<SimTK::Quaternion> quatTable(file.string());
+      quatTable.removeColumn("femur_r_imu");
+      quatTable.removeColumn("femur_l_imu");
+      OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(
+        quatTable, orientationRemovedIMUsFile);
+
+      imuPlacer2.set_orientation_file_for_calibration(
+          orientationRemovedIMUsFile);
+
+      const std::string scaledOutputModelFileRemovedIMUs =
+          resultDir / (scaledOutputModelFilePrefix + sep + imu_removed_suffix +
+                       modelSourcePath.extension().string());
+      sync_out.println("Scaled Output Model File Removed IMUs: ",
+                       scaledOutputModelFileRemovedIMUs);
+
+      imuPlacer2.set_output_model_file(scaledOutputModelFileRemovedIMUs);
+      imuPlacer2.run();
+
     } else {
       sync_out.println("Model Path doesn't exist: ", modelSourcePath);
     }
@@ -227,8 +268,7 @@ int main(int argc, char *argv[]) {
           modelsPath / secondParent.filename();
       const std::filesystem::path resultDir =
           outputPath / secondParent.filename() / firstParent.filename() / "";
-      const ConfigType newConfig = {"",
-                                    (modelPath / m).string()};
+      const ConfigType newConfig = {"", (modelPath / m).string()};
       pool.detach_task([file, resultDir, newConfig] {
         process(file, resultDir, newConfig);
       });
