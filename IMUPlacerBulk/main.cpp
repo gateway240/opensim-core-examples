@@ -125,6 +125,48 @@ void process(const std::filesystem::path &file,
       imuPlacer2.set_output_model_file(scaledOutputModelFileRemovedIMUs);
       imuPlacer2.run();
 
+      // Fix bug for set_model_file
+      // OpenSim::IMUPlacer imuPlacer3;
+      // imuPlacer3.set_base_imu_label("pelvis_imu");
+      // imuPlacer3.set_base_heading_axis("-z");
+      // // 90 0 90
+      // // imuPlacer3.set_sensor_to_opensim_rotations(
+      // //     SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi, 0));
+      // // Known working
+      // imuPlacer3.set_sensor_to_opensim_rotations(
+      //     SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi / 2, 0));
+
+      // // imuPlacer3.set_orientation_file_for_calibration(file.string());
+
+      // imuPlacer3.set_model_file(modelSourcePath.string());
+
+      // // Now Run with removed IMUs
+      // const std::string imu_added_suffix = "torso_head_added";
+      // const std::string orientationAddedIMUsFile =
+      //     resultDir /
+      //     (file.stem().string() + sep + imu_added_suffix  + file.extension().string());
+      // // OpenSim::TimeSeriesTable_<SimTK::Quaternion> quatTable(file.string());
+      // SimTK::Quaternion blank_quat = SimTK::Quaternion(1,0,0,0);
+      // const int rowSize = quatTable.getNumRows();
+      // std::vector<SimTK::Quaternion> blankOVector(rowSize, blank_quat);
+
+      // quatTable.appendColumn("head_imu",rowSize);
+      // // quatTable.appendColumn("torso_imu");
+      // OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(
+      //   quatTable, orientationAddedIMUsFile);
+
+      // imuPlacer3.set_orientation_file_for_calibration(
+      //     orientationAddedIMUsFile);
+
+      // const std::string scaledOutputModelFileAddedIMUs =
+      //     resultDir / (scaledOutputModelFilePrefix + sep + imu_added_suffix +
+      //                  modelSourcePath.extension().string());
+      // sync_out.println("Scaled Output Model File Removed IMUs: ",
+      //                  scaledOutputModelFileAddedIMUs);
+
+      // imuPlacer3.set_output_model_file(scaledOutputModelFileAddedIMUs);
+      // imuPlacer3.run();
+
     } else {
       sync_out.println("Model Path doesn't exist: ", modelSourcePath);
     }
