@@ -98,3 +98,4 @@ Run IMUPlacerBulk first and then IMUIKBulk with same command
  IMUIKBulk and IMUPlacerBulk:
  ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/kuopio-gait-dataset-processed-v2-imu-ik-results
  ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/hamariina-results/kg-imu-ik-results
+ ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models ~/data/test-imu-ik-results

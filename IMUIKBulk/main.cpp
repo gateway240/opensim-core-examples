@@ -16,6 +16,8 @@
 #include <iostream>
 #include <iterator> // For std::back_inserter
 #include <memory>
+#include <optional>
+#include <regex>
 #include <string>
 #include <thread>
 #include <vector>
@@ -33,28 +35,31 @@ typedef std::pair<OpenSim::OrientationWeightSet, std::string> ConfigType;
 
 const std::vector<OpenSim::OrientationWeightSet> orientationWeightSets = {
     OpenSim::OrientationWeightSet("setup_OrientationWeightSet_uniform.xml"),
-    OpenSim::OrientationWeightSet(
-        "setup_OrientationWeightSet_pelvis_tibia_calcn.xml"),
-    OpenSim::OrientationWeightSet(
-        "setup_OrientationWeightSet_pelvis_tibia.xml"),
-    OpenSim::OrientationWeightSet(
-        "setup_OrientationWeightSet_pelvis_calcn.xml"),
-    OpenSim::OrientationWeightSet("setup_OrientationWeightSet_pelvis.xml"),
-    OpenSim::OrientationWeightSet(
-        "setup_OrientationWeightSet_tibia_calcn.xml")};
+    // OpenSim::OrientationWeightSet(
+    //     "setup_OrientationWeightSet_pelvis_tibia_calcn.xml"),
+    // OpenSim::OrientationWeightSet(
+    //     "setup_OrientationWeightSet_pelvis_tibia.xml"),
+    // OpenSim::OrientationWeightSet(
+    //     "setup_OrientationWeightSet_pelvis_calcn.xml"),
+    // OpenSim::OrientationWeightSet("setup_OrientationWeightSet_pelvis.xml"),
+    // OpenSim::OrientationWeightSet(
+    //     "setup_OrientationWeightSet_tibia_calcn.xml")
+        };
 
 const std::vector<std::string> baseModels = {
-    "kg_gait2392_thelen2003muscle_scaled_only.osim",
-    "kg_Rajagopal2016_scaled_only.osim"};
+    "kg_gait2392_thelen2003muscle_scaled.osim",
+    // "kg_Rajagopal2016_scaled.osim"
+    };
 
 // Simple test case
-// const std::vector<std::string> includedParticipants = {"40"};
+const std::vector<std::string> includedParticipants = {"40"};
 
 // All trials with no invalid trials
-const std::vector<std::string> includedParticipants = {
-    "08", "09", "12", "17", "19", "21", "24",
-    "28", "31", "34", "36", "38", "40", "41"};
+// const std::vector<std::string> includedParticipants = {
+//     "08", "09", "12", "17", "19", "21", "24",
+//     "28", "31", "34", "36", "38", "40", "41"};
 
+const std::string imu_removed_suffix = "";
 const std::string outputBasePrefix = "kg";
 const std::string imuSuffix = "and_IMUs";
 
@@ -182,6 +187,44 @@ void createResultDirectory(const std::filesystem::path &filePath,
   }
 }
 
+std::optional<std::smatch> matchesPattern(const std::string &filename) {
+  // Define the regex pattern for "<r or l>_<comf fast or slow>_<two digit
+  // number>"
+  std::regex pattern(R"([rl]_(fast|slow)_(\d{2}))");
+  std::smatch match;
+  if (std::regex_search(filename, match, pattern)) {
+    return match; // Return the matched groups
+  }
+  return std::nullopt; // Return an empty optional if no match is found
+}
+
+std::optional<std::filesystem::path>
+findFirstFile(const std::filesystem::path &directory,
+              const std::string &modelSearchString,
+              const std::string &imuRemovedSearchString,
+              const std::string &trialSearchString) {
+  for (const auto &entry : std::filesystem::directory_iterator(directory)) {
+    if (entry.is_regular_file()) {
+      const auto &path = entry.path();
+      const auto &filename = path.filename().string();
+
+      if (path.extension() == ".osim" &&
+          // file.string().find(modelSearchString) != std::string::npos &&
+          path.string().find(modelSearchString) != std::string::npos &&
+          path.string().find(imuRemovedSearchString) != std::string::npos &&
+          path.string().find(trialSearchString) != std::string::npos) {
+        // std::cout << "file: " << file.string() << std::endl;
+        // std::cout << "model: " << modelSearchString << std::endl;
+        // std::cout << "path: " << path << std::endl;
+        // std::cout << std::endl;
+        // std::cout << path << " search: " << searchString << std::endl;
+        return path;
+      }
+    }
+  }
+  return std::nullopt; // Return an empty optional if no match is found
+}
+
 int main(int argc, char *argv[]) {
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
@@ -255,22 +298,28 @@ int main(int argc, char *argv[]) {
   // Run IK on all permutations
   for (const auto &file : filteredFiles) {
     for (const auto &c : config) {
+      // std::cout << "File: " << file << std::endl;
       // Find the Model
       const std::filesystem::path firstParent = file.parent_path();
       const std::filesystem::path secondParent = firstParent.parent_path();
       const std::filesystem::path resultDir =
           outputPath / secondParent.filename() / firstParent.filename() / "";
       const std::filesystem::path fileNameBaseModel = c.second;
-      const std::string modelFilePrefix =
-          outputBasePrefix + sep + file.stem().string() + sep +
-          fileNameBaseModel.stem().string() + sep + imuSuffix;
-      const std::filesystem::path modelSourcePath =
-          resultDir /
-          (modelFilePrefix + fileNameBaseModel.extension().string());
-      const ConfigType newConfig = {c.first, (modelSourcePath).string()};
-      pool.detach_task([file, resultDir, newConfig] {
-        process(file, resultDir, newConfig);
-      });
+      auto match = matchesPattern(file.string());
+      if (match) {
+        const std::string trial = match.value()[0];
+        // std::cout << "Full match: " << trial << "result dir: " << resultDir << std::endl;
+        const auto result =
+            findFirstFile(resultDir, fileNameBaseModel.stem(),
+                          imu_removed_suffix, trial);
+        if (result) {
+          const std::string modelPath = *result;
+          const ConfigType newConfig = {c.first, modelPath};
+          pool.detach_task([file, resultDir, newConfig] {
+            process(file, resultDir, newConfig);
+          });
+        }
+      }
     }
   }
   // Wait for all tasks to finish

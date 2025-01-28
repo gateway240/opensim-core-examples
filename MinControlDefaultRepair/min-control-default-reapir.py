@@ -80,7 +80,7 @@ def parse_osim_file(osim_file):
             # Get the text content and split it into individual values 
             # The pattern \s*0(\.0+)?\s* matches 0 with optional trailing zeros and surrounding whitespace. 
             pattern = r'<min_control>\s*0(\.0+)?\s*</min_control>'
-            start_key = '<Thelen2003Muscle '
+            start_key = '<Thelen2003Muscle name="default"'
             end_key = '</Thelen2003Muscle>'
             change = '<min_control> 0.01000000 </min_control>'
             find_and_replace(osim_file, start_key, end_key, pattern, change)
@@ -104,7 +104,7 @@ def main(directory):
     """Main function to traverse the directory and process files using a task pool."""
     # Get all file paths in the directory
     file_paths = traverse_directory(directory)
-    files = [file for file in file_paths if file.endswith(".osim")]
+    files = [file for file in file_paths if (file.endswith(".osim") or file.endswith(".xml"))]
 
     # Determine the number of available threads
     max_workers = os.cpu_count()  # Get the number of CPU cores
