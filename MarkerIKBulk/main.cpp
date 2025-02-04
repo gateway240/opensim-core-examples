@@ -27,6 +27,7 @@ BS::synced_stream sync_out(std::cout, log_file);
 
 typedef std::pair<std::string, std::string> ConfigType;
 // All trials with no invalid trials
+const bool allParticipants = true;
 const std::vector<std::string> includedParticipants = {
     "08", "09", "12", "17", "19", "21", "24",
     "28", "31", "34", "36", "38", "40", "41"};
@@ -34,9 +35,9 @@ const std::vector<std::string> includedParticipants = {
 const std::vector<ConfigType> config = {
     // {"kuopio_base_IK_Tasks_uniform.xml",
     // "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
-    {"kg_IK_Tasks_uniform.xml",
-     "kg_gait2392_thelen2003muscle_scaled_and_markerIK.osim"},
-    // {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_and_markerIK.osim"}
+    // {"kg_IK_Tasks_uniform.xml",
+    //  "kg_gait2392_thelen2003muscle_scaled_and_markerIK.osim"},
+    {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_and_markerIK.osim"}
     // {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_only.osim"},
 };
 
@@ -199,7 +200,7 @@ void filterFiles(const std::vector<std::filesystem::path> &allFiles,
     // Check the file extension and naming conditions
     if (path.extension() == ".trc" &&
         (filename.rfind("l_", 0) == 0 || filename.rfind("r_", 0) == 0) &&
-        participantIncluded) {
+        (participantIncluded || allParticipants)) {
       // Add the file to the filtered vector if all conditions are met
       filteredFiles.push_back(path);
     }
