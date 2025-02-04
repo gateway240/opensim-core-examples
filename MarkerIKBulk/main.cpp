@@ -35,8 +35,8 @@ const std::vector<std::string> includedParticipants = {
 const std::vector<ConfigType> config = {
     // {"kuopio_base_IK_Tasks_uniform.xml",
     // "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
-    // {"kg_IK_Tasks_uniform.xml",
-    //  "kg_gait2392_thelen2003muscle_scaled_and_markerIK.osim"},
+    {"kg_IK_Tasks_uniform.xml",
+     "kg_gait2392_thelen2003muscle_scaled_and_markerIK.osim"},
     {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_and_markerIK.osim"}
     // {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_only.osim"},
 };
