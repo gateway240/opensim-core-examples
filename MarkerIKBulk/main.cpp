@@ -27,17 +27,18 @@ BS::synced_stream sync_out(std::cout, log_file);
 
 typedef std::pair<std::string, std::string> ConfigType;
 // All trials with no invalid trials
-const bool allParticipants = true;
-const std::vector<std::string> includedParticipants = {
-    "08", "09", "12", "17", "19", "21", "24",
-    "28", "31", "34", "36", "38", "40", "41"};
+const bool allParticipants = false;
+const std::vector<std::string> includedParticipants = {"40"};
+// const std::vector<std::string> includedParticipants = {
+//     "08", "09", "12", "17", "19", "21", "24",
+//     "28", "31", "34", "36", "38", "40", "41"};
 
 const std::vector<ConfigType> config = {
     // {"kuopio_base_IK_Tasks_uniform.xml",
     // "kg_gait2392_thelen2003muscle_scaled_and_markerIK_and_IMUs.osim"},
     {"kg_IK_Tasks_uniform.xml",
      "kg_gait2392_thelen2003muscle_scaled_and_markerIK.osim"},
-    {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_and_markerIK.osim"}
+    // {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_and_markerIK.osim"}
     // {"kg_IK_Tasks_uniform.xml", "kg_Rajagopal2016_scaled_only.osim"},
 };
 
