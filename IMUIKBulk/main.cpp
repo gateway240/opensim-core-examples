@@ -35,8 +35,8 @@ typedef std::pair<OpenSim::OrientationWeightSet, std::string> ConfigType;
 
 const std::vector<OpenSim::OrientationWeightSet> orientationWeightSets = {
     OpenSim::OrientationWeightSet("setup_OrientationWeightSet_uniform.xml"),
-    // OpenSim::OrientationWeightSet(
-    //     "setup_OrientationWeightSet_pelvis_tibia_calcn.xml"),
+    OpenSim::OrientationWeightSet(
+        "setup_OrientationWeightSet_pelvis_tibia_calcn.xml"),
     // OpenSim::OrientationWeightSet(
     //     "setup_OrientationWeightSet_pelvis_tibia.xml"),
     // OpenSim::OrientationWeightSet(
@@ -48,10 +48,12 @@ const std::vector<OpenSim::OrientationWeightSet> orientationWeightSets = {
 
 const std::vector<std::string> baseModels = {
     "kg_gait2392_thelen2003muscle_scaled.osim",
-    // "kg_Rajagopal2016_scaled.osim"
+    // "kg_Rajagopal2016_scaled.osim",
+        // "kg_KUOPIO_base_R_pelvis_relaxed_scaled_only.osim"
     };
 
 // Simple test case
+const bool allParticipants = true;
 const std::vector<std::string> includedParticipants = {"40"};
 
 // All trials with no invalid trials
@@ -93,7 +95,7 @@ void process(const std::filesystem::path &file,
 
       const OpenSim::Array<double> range{SimTK::Infinity, 2};
       // Make range -Infinity to Infinity unless limited by data
-      range[0] = 4.0;
+      range[0] = 0.0;
       imuIk.set_time_range(range);
 
       // This is the rotation for the kuopio gait dataset
@@ -154,7 +156,7 @@ void filterFiles(const std::vector<std::filesystem::path> &allFiles,
     // Check if the participant ID is in the included list
     const auto it = std::find(includedParticipants.begin(),
                               includedParticipants.end(), participantId);
-    const bool participantIncluded = it != includedParticipants.end();
+    const bool participantIncluded = (it != includedParticipants.end() || allParticipants);
 
     // Check the file extension and naming conditions
     if (path.extension() == ".sto" &&
@@ -190,7 +192,7 @@ void createResultDirectory(const std::filesystem::path &filePath,
 std::optional<std::smatch> matchesPattern(const std::string &filename) {
   // Define the regex pattern for "<r or l>_<comf fast or slow>_<two digit
   // number>"
-  std::regex pattern(R"([rl]_(fast|slow)_(\d{2}))");
+  std::regex pattern(R"([rl]_(fast|slow|comf)_(\d{2}))");
   std::smatch match;
   if (std::regex_search(filename, match, pattern)) {
     return match; // Return the matched groups
@@ -308,12 +310,13 @@ int main(int argc, char *argv[]) {
       auto match = matchesPattern(file.string());
       if (match) {
         const std::string trial = match.value()[0];
-        // std::cout << "Full match: " << trial << "result dir: " << resultDir << std::endl;
+        std::cout << "Full match: " << trial << " result dir: " << resultDir << std::endl;
         const auto result =
             findFirstFile(resultDir, fileNameBaseModel.stem(),
                           imu_removed_suffix, trial);
         if (result) {
           const std::string modelPath = *result;
+          std::cout << "Model path: " << modelPath << std::endl;
           const ConfigType newConfig = {c.first, modelPath};
           pool.detach_task([file, resultDir, newConfig] {
             process(file, resultDir, newConfig);
