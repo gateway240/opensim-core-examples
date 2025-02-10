@@ -67,13 +67,16 @@ def parse_osim_file(osim_file):
         tree = ET.parse(osim_file)
         root = tree.getroot()
 
-        # Find all inertia elements
-        elements = root.findall('.//Thelen2003Muscle')
+        # Find the <defaults> element
+        defaults_element = root.find('.//defaults')
 
-        if not elements:
-            print("No elements found in the .osim file.")
+        elements = None
+        if defaults_element is not None:
+            # Find all Thelen2003Muscle elements within <defaults>
+            elements = defaults_element.findall('.//Thelen2003Muscle')
+        else:
+            print("No Thelen2003Muscle elements found in the <defaults> section.")
             return
-        # else:
                 
         for element in elements:
             # print(ET.tostring(element, encoding='unicode'))

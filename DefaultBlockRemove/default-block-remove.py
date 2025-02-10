@@ -25,10 +25,9 @@ def find_and_delete(file_path, start_key, end_key):
         for line in lines:
             if start_key in line:
                 in_block = True  # We found the opening tag
-                continue  # Skip this line
-            elif end_key in line:
+            if end_key in line:
                 in_block = False  # We found the closing tag
-                continue  # Skip this line
+                continue
             
             if not in_block :
                 new_lines.append(line)  # Only add lines that are outside the <default> tags
