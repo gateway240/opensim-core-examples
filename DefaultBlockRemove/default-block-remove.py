@@ -7,8 +7,8 @@ from collections import defaultdict
 
 import xml.etree.ElementTree as ET
 
-# directory_to_traverse = "/home/alexbeat/AlexDev/opensim-models"  # Change this to your target directory
-directory_to_traverse = "/home/alexbeat/opensim-workspace/opensim-core-source"  # Change this to your target directory
+directory_to_traverse = "/home/alexbeat/AlexDev/opensim-models"  # Change this to your target directory
+# directory_to_traverse = "/home/alexbeat/opensim-workspace/opensim-core-source"  # Change this to your target directory
 # directory_to_traverse = "/home/alexbeat/AlexDev/opensim-core-extension"  # Change this to your target directory
 
 
@@ -28,7 +28,7 @@ def find_and_delete(file_path, start_key, end_key):
             if end_key in line:
                 in_block = False  # We found the closing tag
                 continue
-            
+
             if not in_block :
                 new_lines.append(line)  # Only add lines that are outside the <default> tags
 

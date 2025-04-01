@@ -33,15 +33,16 @@ typedef std::pair<std::string, std::string> ConfigType;
 
 const std::vector<std::string> baseModels = {
     "kg_gait2392_thelen2003muscle_scaled_only.osim",
-    "kg_Rajagopal2016_scaled_only.osim"};
+    "kg_Rajagopal2016_scaled_only.osim",
+    "kg_KUOPIO_base_R_pelvis_relaxed_scaled_only.osim"};
 
 // Simple test case
-// const std::vector<std::string> includedParticipants = {"40"};
+const std::vector<std::string> includedParticipants = {"01"};
 
 // All trials with no invalid trials
-const std::vector<std::string> includedParticipants = {
-    "08", "09", "12", "17", "19", "21", "24",
-    "28", "31", "34", "36", "38", "40", "41"};
+// const std::vector<std::string> includedParticipants = {
+//     "08", "09", "12", "17", "19", "21", "24",
+//     "28", "31", "34", "36", "38", "40", "41"};
 
 const std::string outputBasePrefix = "kg";
 const std::string imuSuffix = "and_IMUs";
@@ -88,42 +89,42 @@ void process(const std::filesystem::path &file,
       imuPlacer.run();
 
       // Fix bug for set_model_file
-      OpenSim::IMUPlacer imuPlacer2;
-      imuPlacer2.set_base_imu_label("pelvis_imu");
-      imuPlacer2.set_base_heading_axis("-z");
-      // 90 0 90
+      // OpenSim::IMUPlacer imuPlacer2;
+      // imuPlacer2.set_base_imu_label("pelvis_imu");
+      // imuPlacer2.set_base_heading_axis("-z");
+      // // 90 0 90
+      // // imuPlacer2.set_sensor_to_opensim_rotations(
+      // //     SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi, 0));
+      // // Known working
       // imuPlacer2.set_sensor_to_opensim_rotations(
-      //     SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi, 0));
-      // Known working
-      imuPlacer2.set_sensor_to_opensim_rotations(
-          SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi / 2, 0));
+      //     SimTK::Vec3(-SimTK::Pi / 2, SimTK::Pi / 2, 0));
 
-      // imuPlacer2.set_orientation_file_for_calibration(file.string());
+      // // imuPlacer2.set_orientation_file_for_calibration(file.string());
 
-      imuPlacer2.set_model_file(modelSourcePath.string());
+      // imuPlacer2.set_model_file(modelSourcePath.string());
 
-      // Now Run with removed IMUs
-      const std::string imu_removed_suffix = "femur_IMUs_removed";
-      const std::string orientationRemovedIMUsFile =
-          resultDir /
-          (file.stem().string() + sep + imu_removed_suffix + file.extension().string());
-      OpenSim::TimeSeriesTable_<SimTK::Quaternion> quatTable(file.string());
-      quatTable.removeColumn("femur_r_imu");
-      quatTable.removeColumn("femur_l_imu");
-      OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(
-        quatTable, orientationRemovedIMUsFile);
+      // // Now Run with removed IMUs
+      // const std::string imu_removed_suffix = "femur_IMUs_removed";
+      // const std::string orientationRemovedIMUsFile =
+      //     resultDir /
+      //     (file.stem().string() + sep + imu_removed_suffix + file.extension().string());
+      // OpenSim::TimeSeriesTable_<SimTK::Quaternion> quatTable(file.string());
+      // quatTable.removeColumn("femur_r_imu");
+      // quatTable.removeColumn("femur_l_imu");
+      // OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(
+      //   quatTable, orientationRemovedIMUsFile);
 
-      imuPlacer2.set_orientation_file_for_calibration(
-          orientationRemovedIMUsFile);
+      // imuPlacer2.set_orientation_file_for_calibration(
+      //     orientationRemovedIMUsFile);
 
-      const std::string scaledOutputModelFileRemovedIMUs =
-          resultDir / (scaledOutputModelFilePrefix + sep + imu_removed_suffix +
-                       modelSourcePath.extension().string());
-      sync_out.println("Scaled Output Model File Removed IMUs: ",
-                       scaledOutputModelFileRemovedIMUs);
+      // const std::string scaledOutputModelFileRemovedIMUs =
+      //     resultDir / (scaledOutputModelFilePrefix + sep + imu_removed_suffix +
+      //                  modelSourcePath.extension().string());
+      // sync_out.println("Scaled Output Model File Removed IMUs: ",
+      //                  scaledOutputModelFileRemovedIMUs);
 
-      imuPlacer2.set_output_model_file(scaledOutputModelFileRemovedIMUs);
-      imuPlacer2.run();
+      // imuPlacer2.set_output_model_file(scaledOutputModelFileRemovedIMUs);
+      // imuPlacer2.run();
 
       // Fix bug for set_model_file
       // OpenSim::IMUPlacer imuPlacer3;
