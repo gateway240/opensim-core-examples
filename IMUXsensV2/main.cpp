@@ -51,30 +51,30 @@ int main() {
       readerSettings.set_rotation_representation("rot_quaternion");
     }
     OpenSim::XsensDataReader reader(readerSettings);
-    std::string folder = readerSettings.get_data_folder() + "/";
+    std::string folder = readerSettings.get_data_folder();
     OpenSim::DataAdapter::OutputTables tables = reader.read(folder);
 
     // Magnetometer
     const OpenSim::TimeSeriesTableVec3 &magTableTyped =
         reader.getMagneticHeadingTable(tables);
-    OpenSim::STOFileAdapterVec3::write(magTableTyped, folder + trial_prefix +
-                                                          "_magnetometers.sto");
+    OpenSim::STOFileAdapterVec3::write(magTableTyped,
+                                       trial_prefix + "_magnetometers.sto");
     // Accelerometer
     const OpenSim::TimeSeriesTableVec3 &accelTableTyped =
         reader.getLinearAccelerationsTable(tables);
-    OpenSim::STOFileAdapterVec3::write(
-        accelTableTyped, folder + trial_prefix + "_accelerations.sto");
+    OpenSim::STOFileAdapterVec3::write(accelTableTyped,
+                                       trial_prefix + "_accelerations.sto");
     // Gyro
     const OpenSim::TimeSeriesTableVec3 &gyroTableTyped =
         reader.getAngularVelocityTable(tables);
     OpenSim::STOFileAdapterVec3::write(gyroTableTyped,
-                                       folder + trial_prefix + "_gyros.sto");
+                                       trial_prefix + "_gyros.sto");
     // Orientations
     const OpenSim::TimeSeriesTableQuaternion &quatTableTyped =
         reader.getOrientationsTable(tables);
 
     OpenSim::STOFileAdapter_<SimTK::Quaternion>::write(
-        quatTableTyped, folder + trial_prefix + "_orientations.sto");
+        quatTableTyped, trial_prefix + "_orientations.sto");
   }
 
   return 0;
