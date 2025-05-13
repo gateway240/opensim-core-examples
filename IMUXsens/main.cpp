@@ -64,6 +64,22 @@ int main() {
         quatTableTyped,
         folder + readerSettings.get_trial_prefix() + imu_desc + "_orientations.sto");
   }
+  OpenSim::XsensDataReaderSettings readerSettings;
+  const std::vector<OpenSim::ExperimentalSensor> expSens = {
+          OpenSim::ExperimentalSensor("_00B42D4D", "femur_l_imu"),
+          OpenSim::ExperimentalSensor("_00B42D4E", "calcn_l_imu")};
+  readerSettings.set_ExperimentalSensors(expSens);
+  readerSettings.updProperty_trial_prefix() = "MT46_01-000";
+
+  OpenSim::XsensDataReader reader(readerSettings);
+  OpenSim::DataAdapter::OutputTables tables = reader.read("./");
+  auto accelTable = tables.at(OpenSim::XsensDataReader::LinearAccelerations);
+  std::cout << accelTable->getNumRows() << std::endl;
+  const OpenSim::TimeSeriesTableVec3 &accelTableTyped =
+  reader.getLinearAccelerationsTable(tables);
+  OpenSim::STOFileAdapterVec3::write(
+    accelTableTyped,
+    "./ALEX_TEST_accelerations.sto");
 
   return 0;
 }
