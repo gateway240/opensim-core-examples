@@ -63,6 +63,11 @@ Preprocessing
 7z a -mmt=on ~/data/kuopio-gait-dataset-processed-26-51-v2.zip ~/data/kuopio-gait-dataset-processed-26-51/*
 ```
 
+C3DParserBulk
+```sh
+./main ~/data/kuopio-crab-walk/Processed_VICON ~/data/kuopio-crab-walk/c3d_extracted
+```
+
 Scale Tool:
 ```sh
 ./main ~/data/kuopio-gait-dataset-processed-v2 ~/data/kuopio-gait-dataset-processed-v2-models
