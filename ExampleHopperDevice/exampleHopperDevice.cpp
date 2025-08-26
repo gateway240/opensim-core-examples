@@ -50,20 +50,20 @@ static const std::string testbedAttachment2{"load"};
 //      Hint: the hopper's pelvis is attached to ground with a vertical slider
 //      joint; see buildHopperModel.cpp and Component::printOutputInfo().
 // [Step 1, Task A]
-static const std::string hopperHeightCoord{"/?????"}; //fill this in
+static const std::string hopperHeightCoord{"/jointset/slider/yCoord"}; //fill this in
 
 //TODO: Provide the absolute path names of the PhysicalOffsetFrames defined on 
 //      the hopper for attaching the assistive device. See buildHopperModel.cpp
 //      and Component::printSubcomponentInfo().
 // [Step 3, Task A]
-static const std::string thighAttachment{"/?????"}; //fill this in
-static const std::string shankAttachment{"/?????"}; //fill this in
+static const std::string thighAttachment{"/bodyset/thigh/deviceAttachmentPoint"}; //fill this in
+static const std::string shankAttachment{"/bodyset/shank/deviceAttachmentPoint"}; //fill this in
 
 //TODO: To assist hopping, we will activate the knee device whenever the vastus
 //      muscle is active. For convenience, we define a string "vastus" which
 //      is the path to the vastus muscle.
 // [Step 3, Task B]
-static const std::string vastus{"/?????"}; //fill this in
+static const std::string vastus{"/forceset/vastus"}; //fill this in
 
 
 namespace OpenSim {
@@ -111,12 +111,23 @@ void connectDeviceToModel(OpenSim::Device& device, OpenSim::Model& model,
 void addConsoleReporterToHopper(Model& hopper)
 {
     //TODO: Create a new ConsoleReporter. Set its name and reporting interval.
-
+    auto* reporter = new ConsoleReporter();
+    reporter->setName("hopper_results");
+    reporter->set_report_time_interval(REPORTING_INTERVAL);
     //TODO: Connect outputs from the hopper to the reporter's inputs. Try
     //      reporting the hopper's height, the vastus muscle's activation, the
     //      knee angle, and any other variables of interest.
+    reporter->addToReport(
+        hopper.getComponent(hopperHeightCoord).getOutput("value"), "height");
+    
+    reporter->addToReport(
+        hopper.getComponent(vastus).getOutput("activation"), "vastus");
 
+    reporter->addToReport(
+        hopper.getComponent("/jointset/knee/kneeFlexion").getOutput("value"),
+        "knee_angle");
     //TODO: Add the reporter to the model.
+    hopper.addComponent(reporter);
 }
 
 

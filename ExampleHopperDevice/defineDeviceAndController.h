@@ -32,6 +32,7 @@ PropMyoController will provide a control signal for the Device.
 Several lines of code need to be added to this file; see exampleHopperDevice.cpp
 and the "TODO" comments below for instructions. */
 
+#include <Common/ComponentOutput.h>
 #include <OpenSim/OpenSim.h>
 
 namespace OpenSim {
@@ -55,15 +56,19 @@ public:
     // The lengthening speed of the device.
     //TODO: Add an output called "speed" (to report the PathActuator's
     //      lengthening speed).
+    OpenSim_DECLARE_OUTPUT(speed, double, getSpeed, SimTK::Stage::Velocity);
 
     // The force transmitted by the device.
     //TODO: Add an output called "tension".
+    OpenSim_DECLARE_OUTPUT(tension, double, getTension, SimTK::Stage::Dynamics);
 
     // The power produced(+) or dissipated(-) by the device.
     //TODO: Add an output called "power".
+    OpenSim_DECLARE_OUTPUT(power, double, getPower, SimTK::Stage::Dynamics);
 
     // The height of the model to which the device is attached.
     //TODO: Add an output called "height".
+    OpenSim_DECLARE_OUTPUT(height, double, getHeight, SimTK::Stage::Position);
 
     // The center of mass height of the model to which the device is attached.
     //TODO: Add an output called "com_height".

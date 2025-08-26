@@ -170,17 +170,17 @@ int main()
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Added ControllableSpring between the first linkage and the second block
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // ControllableSpring* spring = new ControllableSpring();
-        // spring->setName("spring");
-        // spring->setFrameA(*block);
-        // spring->setFrameB(*linkage1);
-        // spring->setPointA(pointOnBodies);
-        // spring->setPointB(pointOnBodies);
-        // spring->setOptimalForce(2000.0);
-        // spring->setPointsAreGlobal(false);
-        // spring->setRestLength(0.8);
+        ControllableSpring* spring = new ControllableSpring();
+        spring->setName("spring");
+        spring->setFrameA(*block);
+        spring->setFrameB(*linkage1);
+        spring->setPointA(pointOnBodies);
+        spring->setPointB(pointOnBodies);
+        spring->setOptimalForce(2000.0);
+        spring->setPointsAreGlobal(false);
+        spring->setRestLength(0.8);
 
-        // osimModel.addForce(spring);
+        osimModel.addForce(spring);
 
         // define the simulation times
         double t0(0.0), tf(15);
