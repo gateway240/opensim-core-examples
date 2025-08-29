@@ -66,6 +66,7 @@ Preprocessing
 C3DParserBulk
 ```sh
 ./main ~/data/kuopio-crab-walk/Processed_VICON ~/data/kuopio-crab-walk/c3d_extracted
+./main ~/AlexDev/obscure-dataset-preprocessing/out/obscure-dataset ~/AlexDev/obscure-dataset-preprocessing/out/obscure-dataset-c3d
 ```
 
 Scale Tool:

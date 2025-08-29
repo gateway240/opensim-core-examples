@@ -51,22 +51,34 @@ void processC3DFile(const fs::path &filename, const fs::path &resultPath) {
 
     // Get the last two parent directories
     std::filesystem::path firstParent = filename.parent_path(); // First parent
-    std::filesystem::path secondParent = firstParent.parent_path(); // Second parent
 
-    std::filesystem::path baseDir = resultPath / secondParent.filename() / firstParent.filename() / "";
+    std::filesystem::path secondParent =
+        firstParent.parent_path(); // Second parent
+
+    std::filesystem::path thirdParent =
+        secondParent.parent_path(); // Second parent
+
+    // std::cout << firstParent.filename() << " " << secondParent.filename() <<
+    // " " << thirdParent.filename() << std::endl;
+
+    std::filesystem::path baseDir = resultPath / thirdParent.filename() /
+                                    "extracted" / firstParent.filename() / "";
 
     // Create directories if they don't exist
     try {
-        if (std::filesystem::create_directories(baseDir)) {
-            std::cout << "Directories created: " << baseDir << std::endl;
-        }
-    } catch (const std::filesystem::filesystem_error& e) {
-        std::cerr << "Error creating directories: " << e.what() << std::endl;
+      if (std::filesystem::create_directories(baseDir)) {
+        std::cout << "Directories created: " << baseDir << std::endl;
+      }
+    } catch (const std::filesystem::filesystem_error &e) {
+      std::cerr << "Error creating directories: " << e.what() << std::endl;
     }
 
-    const std::string marker_file = baseDir.string() + filename.stem().string() + "_markers.trc";
-    const std::string forces_file = baseDir.string() + filename.stem().string() + "_grfs.sto";
-    const std::string analogs_file = baseDir.string() + filename.stem().string() + "_analog.sto";
+    const std::string marker_file =
+        baseDir.string() + filename.stem().string() + "_markers.trc";
+    const std::string forces_file =
+        baseDir.string() + filename.stem().string() + "_grfs.sto";
+    const std::string analogs_file =
+        baseDir.string() + filename.stem().string() + "_analog.sto";
 
     // Write marker locations
     marker_table->updTableMetaData().setValueForKey("Units", std::string{"mm"});
@@ -96,9 +108,13 @@ void processDirectory(const fs::path &dirPath, const fs::path &resultPath) {
     } else if (entry.is_regular_file()) {
       // Check if the file has a .c3d extension
       if (entry.path().extension() == ".c3d") {
-        // Create a corresponding text file
-        fs::path textFilePath = entry.path();
-        threads.emplace_back(processC3DFile, textFilePath, resultPath);
+        std::string fullPathStr = entry.path().string();
+        auto rawPos = fullPathStr.find("raw_selected");
+        if (rawPos != std::string::npos) {
+          // Create a corresponding text file
+          fs::path textFilePath = entry.path();
+          threads.emplace_back(processC3DFile, textFilePath, resultPath);
+        }
       }
     }
   }
@@ -114,7 +130,8 @@ int main(int argc, char *argv[]) {
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
   if (argc < 3) {
-    std::cerr << "Usage: " << argv[0] << " <directory_path> <output_path>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <directory_path> <output_path>"
+              << std::endl;
     return 1;
   }
 
